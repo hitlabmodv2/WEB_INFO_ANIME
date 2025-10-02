@@ -7,14 +7,14 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
-- **Smart Auto-Update**: Auto-refresh now maintains current page and filters - stays on page 2 with ONA filter during 5-minute auto-update
-- **Loading Bug Fix**: Fixed white screen issue during navigation to detail page and Pictures tab - now shows proper fullscreen loading animation
-- **Type Filtering Fix**: Fixed anime type filters (TV, ONA, OVA, Movie, Special) across all tabs with proper server-side and client-side filtering
-- **Schedule Filtering**: Implemented client-side type filtering for schedules endpoint (Jikan API limitation workaround)
-- **Improved Error Messages**: Enhanced error messages to show which anime type was selected when no data available
-- **Pagination System**: Complete pagination with 10 items per page across all tabs (Schedule, Latest, Popular, Season)
-- **Advanced Navigation**: 5 pagination buttons - First (⏮), Previous (←), Page Info, Next (→), Last (⏭) with auto-scroll to top
-- **Loading Animations**: Smooth 1-100% progress animation when navigating to anime details and returning to home page
+- **Image Grid Display**: Revamped to show only anime images in responsive grid layout with hover overlay showing title, type, and score
+- **Mini Filter Buttons**: Added compact type filter buttons (Semua, TV, ONA, OVA, Movie, Special) optimized for mobile with horizontal scroll
+- **Infinite Scroll**: Replaced pagination with infinite scroll - new anime automatically load when scrolling to bottom
+- **Smart Image Loading**: Individual loader for each image to prevent white screen, with lazy loading and fade-in animation
+- **Enhanced Loading States**: Improved loading animations for Pictures tab with proper skeleton loaders
+- **Auto-Update Maintained**: 5-minute auto-refresh still active and maintains current type filter selection
+- **Responsive Design**: Filter buttons adjust size based on screen - smaller on mobile, larger on desktop
+- **Smooth Transitions**: All images fade in smoothly when loaded, improving user experience
 
 ### Previous Updates
 - Implemented dedicated detail page (`detail.html`) with comprehensive anime information
