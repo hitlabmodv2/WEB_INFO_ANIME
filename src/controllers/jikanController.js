@@ -6,12 +6,7 @@ export const getSchedule = async (req, res) => {
   try {
     const { type, page = 1 } = req.query;
     
-    let url = `${JIKAN_BASE}/schedules`;
-    if (type && type !== 'all' && type !== '') {
-      url += `?filter=${type}`;
-    }
-    
-    const response = await axios.get(url);
+    const response = await axios.get(`${JIKAN_BASE}/schedules`);
     
     const scheduleByDay = {};
     const dayMapping = {
@@ -25,6 +20,10 @@ export const getSchedule = async (req, res) => {
     };
 
     response.data.data.forEach(anime => {
+      if (type && type !== 'all' && type !== '' && anime.type?.toLowerCase() !== type.toLowerCase()) {
+        return;
+      }
+      
       const day = anime.broadcast?.day || 'unknown';
       const indonesianDay = dayMapping[day.toLowerCase()] || 'Tidak Diketahui';
       
