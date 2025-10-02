@@ -7,6 +7,8 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
+- **Fixed White Screen Issue**: Replaced window.open() with modal/lightbox for Pictures tab - images now open in-page with smooth loading animation instead of showing white screen in new tab
+- **Image Modal Viewer**: Added full-screen modal for viewing anime pictures with loading indicator, click-outside to close, Escape key support, and error handling
 - **Always-Visible Captions**: Image captions now always visible (not just on hover) showing anime title, rating (score), and release schedule information
 - **Grouped Display by Type**: When "Semua" filter is selected, anime are organized into sections by type (TV, ONA, OVA, Movie, Special) with clear section headers showing type name and anime count
 - **Enhanced Caption Info**: Each anime card displays title, type badge, score rating, and broadcast/release schedule when available
