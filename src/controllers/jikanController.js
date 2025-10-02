@@ -4,7 +4,14 @@ const JIKAN_BASE = 'https://api.jikan.moe/v4';
 
 export const getSchedule = async (req, res) => {
   try {
-    const response = await axios.get(`${JIKAN_BASE}/schedules`);
+    const { type, page = 1 } = req.query;
+    
+    let url = `${JIKAN_BASE}/schedules`;
+    if (type && type !== 'all' && type !== '') {
+      url += `?filter=${type}`;
+    }
+    
+    const response = await axios.get(url);
     
     const scheduleByDay = {};
     const dayMapping = {
@@ -40,12 +47,30 @@ export const getSchedule = async (req, res) => {
       });
     });
 
-    const formattedData = [];
+    let formattedData = [];
     Object.keys(scheduleByDay).forEach(day => {
       formattedData.push(...scheduleByDay[day]);
     });
 
-    res.json(formattedData);
+    const itemsPerPage = 10;
+    const totalItems = formattedData.length;
+    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
+    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedData = formattedData.slice(startIndex, endIndex);
+
+    res.json({
+      data: paginatedData,
+      pagination: {
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      }
+    });
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mengambil jadwal anime' });
@@ -54,11 +79,16 @@ export const getSchedule = async (req, res) => {
 
 export const getCurrentSeason = async (req, res) => {
   try {
-    const response = await axios.get(`${JIKAN_BASE}/seasons/now`, {
-      params: { limit: 25 }
-    });
+    const { type, page = 1 } = req.query;
+    const params = { limit: 25 };
+    
+    if (type && type !== 'all' && type !== '') {
+      params.filter = type;
+    }
+    
+    const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
 
-    const data = response.data.data.map(anime => ({
+    let data = response.data.data.map(anime => ({
       mal_id: anime.mal_id,
       title: anime.title,
       image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
@@ -69,7 +99,25 @@ export const getCurrentSeason = async (req, res) => {
       synopsis: anime.synopsis
     }));
 
-    res.json(data);
+    const itemsPerPage = 10;
+    const totalItems = data.length;
+    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
+    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedData = data.slice(startIndex, endIndex);
+
+    res.json({
+      data: paginatedData,
+      pagination: {
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      }
+    });
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mengambil anime terbaru' });
@@ -78,10 +126,10 @@ export const getCurrentSeason = async (req, res) => {
 
 export const getSeasonalAnime = async (req, res) => {
   try {
-    const { type, year, season } = req.query;
+    const { type, year, season, page = 1 } = req.query;
     const params = { limit: 25 };
     
-    if (type && type !== 'all') {
+    if (type && type !== 'all' && type !== '') {
       params.filter = type;
     }
 
@@ -92,7 +140,7 @@ export const getSeasonalAnime = async (req, res) => {
 
     const response = await axios.get(url, { params });
 
-    const data = response.data.data.map(anime => ({
+    let data = response.data.data.map(anime => ({
       id: anime.mal_id,
       mal_id: anime.mal_id,
       title: anime.title,
@@ -104,7 +152,25 @@ export const getSeasonalAnime = async (req, res) => {
       synopsis: anime.synopsis
     }));
 
-    res.json(data);
+    const itemsPerPage = 10;
+    const totalItems = data.length;
+    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
+    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedData = data.slice(startIndex, endIndex);
+
+    res.json({
+      data: paginatedData,
+      pagination: {
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      }
+    });
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mengambil anime musiman' });
@@ -154,11 +220,16 @@ export const getAnimeDetail = async (req, res) => {
 
 export const getPopular = async (req, res) => {
   try {
-    const response = await axios.get(`${JIKAN_BASE}/top/anime`, {
-      params: { limit: 25 }
-    });
+    const { type, page = 1 } = req.query;
+    const params = { limit: 25 };
+    
+    if (type && type !== 'all' && type !== '') {
+      params.type = type;
+    }
+    
+    const response = await axios.get(`${JIKAN_BASE}/top/anime`, { params });
 
-    const data = response.data.data.map(anime => ({
+    let data = response.data.data.map(anime => ({
       mal_id: anime.mal_id,
       title: anime.title,
       image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
@@ -168,7 +239,25 @@ export const getPopular = async (req, res) => {
       rank: anime.rank
     }));
 
-    res.json(data);
+    const itemsPerPage = 10;
+    const totalItems = data.length;
+    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
+    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedData = data.slice(startIndex, endIndex);
+
+    res.json({
+      data: paginatedData,
+      pagination: {
+        currentPage,
+        totalPages,
+        totalItems,
+        itemsPerPage,
+        hasNextPage: currentPage < totalPages,
+        hasPrevPage: currentPage > 1
+      }
+    });
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mengambil anime populer' });
