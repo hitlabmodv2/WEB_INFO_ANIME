@@ -1,17 +1,25 @@
-
 {
-  "name": "kennzy-website",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "Personal website for Bang Wily",
-  "main": "index.html",
+  "main": "server.js",
+  "type": "module",
+  
   "scripts": {
-    "start": "npx serve . -p $PORT",
-    "dev": "serve . -p 3000"
+    "start": "node src/app.js"
   },
   "dependencies": {
-    "serve": "^14.2.1"
+    "axios": "^1.7.2",
+    "cheerio": "^1.0.0-rc.12",
+    "chrome-aws-lambda": "^9.1.0",
+    "cors": "^2.8.5",
+    "cors-anywhere": "^0.4.4",
+    "express": "^4.19.2",
+    "puppeteer": "^22.15.0",
+    "puppeteer-core": "^9.1.1",
+    "string-similarity": "^4.0.4"
   },
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
