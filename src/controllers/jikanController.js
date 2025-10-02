@@ -76,6 +76,41 @@ export const getCurrentSeason = async (req, res) => {
   }
 };
 
+export const getSeasonalAnime = async (req, res) => {
+  try {
+    const { type, year, season } = req.query;
+    const params = { limit: 25 };
+    
+    if (type && type !== 'all') {
+      params.filter = type;
+    }
+
+    let url = `${JIKAN_BASE}/seasons/now`;
+    if (year && season) {
+      url = `${JIKAN_BASE}/seasons/${year}/${season}`;
+    }
+
+    const response = await axios.get(url, { params });
+
+    const data = response.data.data.map(anime => ({
+      id: anime.mal_id,
+      mal_id: anime.mal_id,
+      title: anime.title,
+      image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+      type: anime.type,
+      score: anime.score,
+      status: anime.status,
+      episodes: anime.episodes,
+      synopsis: anime.synopsis
+    }));
+
+    res.json(data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil anime musiman' });
+  }
+};
+
 export const getAnimeDetail = async (req, res) => {
   try {
     const { id } = req.params;

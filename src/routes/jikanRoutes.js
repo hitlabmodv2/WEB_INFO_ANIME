@@ -1,7 +1,8 @@
 import express from 'express';
 import { 
   getSchedule, 
-  getCurrentSeason, 
+  getCurrentSeason,
+  getSeasonalAnime, 
   getPopular, 
   searchAnime, 
   getAnimeDetail,
@@ -18,6 +19,7 @@ const router = express.Router();
 
 router.get('/schedule', getSchedule);
 router.get('/new', getCurrentSeason);
+router.get('/season', getSeasonalAnime);
 router.get('/popular', getPopular);
 router.get('/search/:keyword', searchAnime);
 router.get('/detail/:id', getAnimeDetail);
