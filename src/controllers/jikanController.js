@@ -5,10 +5,13 @@ const JIKAN_BASE = 'https://api.jikan.moe/v4';
 export const getSchedule = async (req, res) => {
   try {
     const { type, page = 1 } = req.query;
+    const params = { 
+      page: parseInt(page),
+      limit: 25
+    };
     
-    const response = await axios.get(`${JIKAN_BASE}/schedules`);
+    const response = await axios.get(`${JIKAN_BASE}/schedules`, { params });
     
-    const scheduleByDay = {};
     const dayMapping = {
       'monday': 'Senin',
       'tuesday': 'Selasa',
@@ -19,55 +22,44 @@ export const getSchedule = async (req, res) => {
       'sunday': 'Minggu'
     };
 
-    response.data.data.forEach(anime => {
-      if (type && type !== 'all' && type !== '' && anime.type?.toLowerCase() !== type.toLowerCase()) {
-        return;
-      }
-      
-      const day = anime.broadcast?.day || 'unknown';
-      const indonesianDay = dayMapping[day.toLowerCase()] || 'Tidak Diketahui';
-      
-      if (!scheduleByDay[indonesianDay]) {
-        scheduleByDay[indonesianDay] = [];
-      }
-
-      scheduleByDay[indonesianDay].push({
-        mal_id: anime.mal_id,
-        title: anime.title,
-        image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
-        day: indonesianDay,
-        time: anime.broadcast?.time || 'TBA',
-        aired: anime.aired?.string || 'TBA',
-        airedFrom: anime.aired?.from || null,
-        episode: `Episodes: ${anime.episodes || '?'}`,
-        score: anime.score,
-        type: anime.type,
-        status: anime.status
+    let formattedData = response.data.data
+      .filter(anime => {
+        if (!type || type === 'all' || type === '') {
+          return true;
+        }
+        return anime.type?.toLowerCase() === type.toLowerCase();
+      })
+      .map(anime => {
+        const day = anime.broadcast?.day || 'unknown';
+        const indonesianDay = dayMapping[day.toLowerCase()] || 'Tidak Diketahui';
+        
+        return {
+          mal_id: anime.mal_id,
+          title: anime.title,
+          image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+          day: indonesianDay,
+          time: anime.broadcast?.time || 'TBA',
+          aired: anime.aired?.string || 'TBA',
+          airedFrom: anime.aired?.from || null,
+          episode: `Episodes: ${anime.episodes || '?'}`,
+          score: anime.score,
+          type: anime.type,
+          status: anime.status,
+          broadcast: anime.broadcast
+        };
       });
-    });
 
-    let formattedData = [];
-    Object.keys(scheduleByDay).forEach(day => {
-      formattedData.push(...scheduleByDay[day]);
-    });
-
-    const itemsPerPage = 10;
-    const totalItems = formattedData.length;
-    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
-    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedData = formattedData.slice(startIndex, endIndex);
+    const pagination = response.data.pagination || {};
 
     res.json({
-      data: paginatedData,
+      data: formattedData,
       pagination: {
-        currentPage,
-        totalPages,
-        totalItems,
-        itemsPerPage,
-        hasNextPage: currentPage < totalPages,
-        hasPrevPage: currentPage > 1
+        currentPage: pagination.current_page || parseInt(page),
+        totalPages: pagination.last_visible_page || 1,
+        totalItems: formattedData.length,
+        itemsPerPage: pagination.items?.per_page || 25,
+        hasNextPage: pagination.has_next_page || false,
+        hasPrevPage: (parseInt(page) > 1)
       }
     });
   } catch (error) {
@@ -79,7 +71,10 @@ export const getSchedule = async (req, res) => {
 export const getCurrentSeason = async (req, res) => {
   try {
     const { type, page = 1 } = req.query;
-    const params = { limit: 25 };
+    const params = { 
+      page: parseInt(page),
+      limit: 25
+    };
     
     if (type && type !== 'all' && type !== '') {
       params.filter = type;
@@ -95,26 +90,22 @@ export const getCurrentSeason = async (req, res) => {
       score: anime.score,
       status: anime.status,
       episodes: anime.episodes,
-      synopsis: anime.synopsis
+      synopsis: anime.synopsis,
+      broadcast: anime.broadcast,
+      aired: anime.aired
     }));
 
-    const itemsPerPage = 10;
-    const totalItems = data.length;
-    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
-    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedData = data.slice(startIndex, endIndex);
+    const pagination = response.data.pagination || {};
 
     res.json({
-      data: paginatedData,
+      data: data,
       pagination: {
-        currentPage,
-        totalPages,
-        totalItems,
-        itemsPerPage,
-        hasNextPage: currentPage < totalPages,
-        hasPrevPage: currentPage > 1
+        currentPage: pagination.current_page || parseInt(page),
+        totalPages: pagination.last_visible_page || 1,
+        totalItems: pagination.items?.total || data.length,
+        itemsPerPage: pagination.items?.per_page || 25,
+        hasNextPage: pagination.has_next_page || false,
+        hasPrevPage: (parseInt(page) > 1)
       }
     });
   } catch (error) {
@@ -126,7 +117,10 @@ export const getCurrentSeason = async (req, res) => {
 export const getSeasonalAnime = async (req, res) => {
   try {
     const { type, year, season, page = 1 } = req.query;
-    const params = { limit: 25 };
+    const params = { 
+      page: parseInt(page),
+      limit: 25
+    };
     
     if (type && type !== 'all' && type !== '') {
       params.filter = type;
@@ -148,26 +142,22 @@ export const getSeasonalAnime = async (req, res) => {
       score: anime.score,
       status: anime.status,
       episodes: anime.episodes,
-      synopsis: anime.synopsis
+      synopsis: anime.synopsis,
+      broadcast: anime.broadcast,
+      aired: anime.aired
     }));
 
-    const itemsPerPage = 10;
-    const totalItems = data.length;
-    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
-    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedData = data.slice(startIndex, endIndex);
+    const pagination = response.data.pagination || {};
 
     res.json({
-      data: paginatedData,
+      data: data,
       pagination: {
-        currentPage,
-        totalPages,
-        totalItems,
-        itemsPerPage,
-        hasNextPage: currentPage < totalPages,
-        hasPrevPage: currentPage > 1
+        currentPage: pagination.current_page || parseInt(page),
+        totalPages: pagination.last_visible_page || 1,
+        totalItems: pagination.items?.total || data.length,
+        itemsPerPage: pagination.items?.per_page || 25,
+        hasNextPage: pagination.has_next_page || false,
+        hasPrevPage: (parseInt(page) > 1)
       }
     });
   } catch (error) {
@@ -220,7 +210,10 @@ export const getAnimeDetail = async (req, res) => {
 export const getPopular = async (req, res) => {
   try {
     const { type, page = 1 } = req.query;
-    const params = { limit: 25 };
+    const params = { 
+      page: parseInt(page),
+      limit: 25
+    };
     
     if (type && type !== 'all' && type !== '') {
       params.type = type;
@@ -235,26 +228,22 @@ export const getPopular = async (req, res) => {
       type: anime.type,
       score: anime.score,
       status: anime.status,
-      rank: anime.rank
+      rank: anime.rank,
+      broadcast: anime.broadcast,
+      aired: anime.aired
     }));
 
-    const itemsPerPage = 10;
-    const totalItems = data.length;
-    const totalPages = totalItems > 0 ? Math.ceil(totalItems / itemsPerPage) : 1;
-    const currentPage = totalItems > 0 ? Math.min(Math.max(1, parseInt(page)), totalPages) : 1;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedData = data.slice(startIndex, endIndex);
+    const pagination = response.data.pagination || {};
 
     res.json({
-      data: paginatedData,
+      data: data,
       pagination: {
-        currentPage,
-        totalPages,
-        totalItems,
-        itemsPerPage,
-        hasNextPage: currentPage < totalPages,
-        hasPrevPage: currentPage > 1
+        currentPage: pagination.current_page || parseInt(page),
+        totalPages: pagination.last_visible_page || 1,
+        totalItems: pagination.items?.total || data.length,
+        itemsPerPage: pagination.items?.per_page || 25,
+        hasNextPage: pagination.has_next_page || false,
+        hasPrevPage: (parseInt(page) > 1)
       }
     });
   } catch (error) {
