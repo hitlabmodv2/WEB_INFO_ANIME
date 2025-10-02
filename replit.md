@@ -7,13 +7,15 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
+- **Type Badge Indicators**: Visual badges on every anime card showing type (TV/ONA/OVA/Movie/Special) with unique gradient colors for easy identification
+- **Duplicate Prevention**: Fixed bug where duplicate images appeared during infinite scroll - now properly checks existing IDs before appending
 - **Image Grid Display**: Revamped to show only anime images in responsive grid layout with hover overlay showing title, type, and score
 - **Mini Filter Buttons**: Added compact type filter buttons (Semua, TV, ONA, OVA, Movie, Special) optimized for mobile with horizontal scroll
 - **Infinite Scroll**: Replaced pagination with infinite scroll - new anime automatically load when scrolling to bottom
 - **Smart Image Loading**: Individual loader for each image to prevent white screen, with lazy loading and fade-in animation
 - **Enhanced Loading States**: Improved loading animations for Pictures tab with proper skeleton loaders
 - **Auto-Update Maintained**: 5-minute auto-refresh still active and maintains current type filter selection
-- **Responsive Design**: Filter buttons adjust size based on screen - smaller on mobile, larger on desktop
+- **Responsive Design**: Filter buttons and badges adjust size based on screen - smaller on mobile, larger on desktop
 - **Smooth Transitions**: All images fade in smoothly when loaded, improving user experience
 
 ### Previous Updates
