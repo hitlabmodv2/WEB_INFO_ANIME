@@ -10,6 +10,7 @@ The project features a web-based frontend that displays real-time anime schedule
 - **Schedule Page Enhancements**: Major UI/UX improvements to the Schedule (Jadwal) tab
   - **No Pagination**: Removed pagination controls (Previous/Next buttons) exclusively from Schedule tab for cleaner viewing
   - **Anime Thumbnails**: Added small poster images (45x63px mobile, 50x70px desktop, 60x84px tablet) to every schedule item with smooth hover zoom effect
+  - **Skeleton Loader**: Shimmer loading animation for thumbnails prevents white screen during image loading - smooth fade-in transition when images load
   - **Color-Coded Days**: Each day of the week (Monday-Sunday) now has unique color scheme - Senin (red), Selasa (teal), Rabu (yellow), Kamis (green), Jumat (purple), Sabtu (pink), Minggu (orange)
   - **LIVE Badge in Schedule**: Real-time LIVE indicator appears on anime currently airing in the schedule list, using Tokyo timezone with -5 to +30 minute detection window
   - **Responsive Design**: All schedule elements optimized for mobile, tablet, and desktop viewing
