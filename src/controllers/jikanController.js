@@ -19,7 +19,14 @@ export const getSchedule = async (req, res) => {
       'thursday': 'Kamis',
       'friday': 'Jumat',
       'saturday': 'Sabtu',
-      'sunday': 'Minggu'
+      'sunday': 'Minggu',
+      'mondays': 'Senin',
+      'tuesdays': 'Selasa',
+      'wednesdays': 'Rabu',
+      'thursdays': 'Kamis',
+      'fridays': 'Jumat',
+      'saturdays': 'Sabtu',
+      'sundays': 'Minggu'
     };
 
     let formattedData = response.data.data

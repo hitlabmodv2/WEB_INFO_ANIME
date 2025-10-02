@@ -7,6 +7,11 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
+- **Real-Time LIVE Indicator**: Added automatic LIVE badge detection for "Sedang Tayang" tab - shows red pulsing LIVE badge on anime currently airing based on JST broadcast time
+- **Smart Anime Grouping**: "Sedang Tayang" tab now separates anime into "🔴 LIVE SEKARANG" (currently airing) and "📺 Sedang Tayang Musim Ini" (upcoming) sections
+- **Timezone-Aware Detection**: LIVE detection automatically converts to Japan Standard Time (JST) for accurate broadcast matching, with 5-minute pre-show and 30-minute post-show window
+- **Animated LIVE Badge**: Red pulsing badge with animated white dot indicator appears on anime cards during broadcast time
+- **Auto-Refresh Integration**: 5-minute auto-refresh maintains real-time LIVE status updates across all tabs
 - **Pagination System**: Replaced infinite scroll with proper pagination - now showing "Previous" and "Next" buttons with current page number for better navigation
 - **Filter by Type**: Each type filter (Semua, TV, ONA, OVA, Movie, Special) now works independently with pagination support - click "TV" to see only TV anime, "Movie" for movies, etc.
 - **Grouped Display**: "Semua" button shows all anime organized by type (TV, ONA, OVA, Movie, Special) with color-coded section headers
