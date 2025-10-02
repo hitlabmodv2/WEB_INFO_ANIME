@@ -7,6 +7,12 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
+- **Schedule Page Enhancements**: Major UI/UX improvements to the Schedule (Jadwal) tab
+  - **No Pagination**: Removed pagination controls (Previous/Next buttons) exclusively from Schedule tab for cleaner viewing
+  - **Anime Thumbnails**: Added small poster images (45x63px mobile, 50x70px desktop, 60x84px tablet) to every schedule item with smooth hover zoom effect
+  - **Color-Coded Days**: Each day of the week (Monday-Sunday) now has unique color scheme - Senin (red), Selasa (teal), Rabu (yellow), Kamis (green), Jumat (purple), Sabtu (pink), Minggu (orange)
+  - **LIVE Badge in Schedule**: Real-time LIVE indicator appears on anime currently airing in the schedule list, using Tokyo timezone with -5 to +30 minute detection window
+  - **Responsive Design**: All schedule elements optimized for mobile, tablet, and desktop viewing
 - **Real-Time LIVE Indicator**: Added automatic LIVE badge detection for "Sedang Tayang" tab - shows red pulsing LIVE badge on anime currently airing based on JST broadcast time
 - **Smart Anime Grouping**: "Sedang Tayang" tab now separates anime into "🔴 LIVE SEKARANG" (currently airing) and "📺 Sedang Tayang Musim Ini" (upcoming) sections
 - **Timezone-Aware Detection**: LIVE detection automatically converts to Japan Standard Time (JST) for accurate broadcast matching, with 5-minute pre-show and 30-minute post-show window
