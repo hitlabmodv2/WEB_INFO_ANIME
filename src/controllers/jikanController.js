@@ -26,10 +26,13 @@ export const getSchedule = async (req, res) => {
       }
 
       scheduleByDay[indonesianDay].push({
+        mal_id: anime.mal_id,
         title: anime.title,
         image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
         day: indonesianDay,
         time: anime.broadcast?.time || 'TBA',
+        aired: anime.aired?.string || 'TBA',
+        airedFrom: anime.aired?.from || null,
         episode: `Episodes: ${anime.episodes || '?'}`,
         score: anime.score,
         type: anime.type,
@@ -56,6 +59,7 @@ export const getCurrentSeason = async (req, res) => {
     });
 
     const data = response.data.data.map(anime => ({
+      mal_id: anime.mal_id,
       title: anime.title,
       image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
       type: anime.type,
@@ -72,6 +76,47 @@ export const getCurrentSeason = async (req, res) => {
   }
 };
 
+export const getAnimeDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}`);
+    const anime = response.data.data;
+
+    const detailData = {
+      mal_id: anime.mal_id,
+      title: anime.title,
+      titleEnglish: anime.title_english,
+      titleJapanese: anime.title_japanese,
+      imageSrc: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+      description: anime.synopsis,
+      aired: anime.aired?.string || 'TBA',
+      airedFrom: anime.aired?.from,
+      airedTo: anime.aired?.to,
+      premiered: anime.season && anime.year ? `${anime.season} ${anime.year}` : 'TBA',
+      duration: anime.duration,
+      status: anime.status,
+      malScore: anime.score,
+      rating: anime.rating,
+      rank: anime.rank,
+      popularity: anime.popularity,
+      members: anime.members,
+      favorites: anime.favorites,
+      genres: anime.genres?.map(g => g.name) || [],
+      studios: anime.studios?.map(s => s.name) || [],
+      producers: anime.producers?.map(p => p.name) || [],
+      type: anime.type,
+      episodes: anime.episodes,
+      source: anime.source,
+      broadcast: anime.broadcast?.string || 'TBA'
+    };
+
+    res.json(detailData);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil detail anime' });
+  }
+};
+
 export const getPopular = async (req, res) => {
   try {
     const response = await axios.get(`${JIKAN_BASE}/top/anime`, {
@@ -79,6 +124,7 @@ export const getPopular = async (req, res) => {
     });
 
     const data = response.data.data.map(anime => ({
+      mal_id: anime.mal_id,
       title: anime.title,
       image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
       type: anime.type,
@@ -102,6 +148,7 @@ export const searchAnime = async (req, res) => {
     });
 
     const data = response.data.data.map(anime => ({
+      mal_id: anime.mal_id,
       title: anime.title,
       image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
       type: anime.type,
@@ -114,5 +161,82 @@ export const searchAnime = async (req, res) => {
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mencari anime' });
+  }
+};
+
+export const getCharacters = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}/characters`);
+    res.json(response.data.data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil karakter' });
+  }
+};
+
+export const getEpisodes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}/episodes`);
+    res.json(response.data.data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil episode' });
+  }
+};
+
+export const getVideos = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}/videos`);
+    res.json(response.data.data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil video' });
+  }
+};
+
+export const getStats = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}/statistics`);
+    res.json(response.data.data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil statistik' });
+  }
+};
+
+export const getReviews = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}/reviews`);
+    res.json(response.data.data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil review' });
+  }
+};
+
+export const getRecommendations = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}/recommendations`);
+    res.json(response.data.data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil rekomendasi' });
+  }
+};
+
+export const getPictures = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const response = await axios.get(`${JIKAN_BASE}/anime/${id}/pictures`);
+    res.json(response.data.data);
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil gambar' });
   }
 };
