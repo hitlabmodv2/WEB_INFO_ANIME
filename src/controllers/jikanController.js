@@ -207,6 +207,53 @@ export const getAnimeDetail = async (req, res) => {
   }
 };
 
+export const getCurrentlyAiring = async (req, res) => {
+  try {
+    const { type, page = 1 } = req.query;
+    const params = { 
+      page: parseInt(page),
+      limit: 25,
+      status: 'airing'
+    };
+    
+    if (type && type !== 'all' && type !== '') {
+      params.type = type;
+    }
+    
+    const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
+
+    let data = response.data.data.map(anime => ({
+      mal_id: anime.mal_id,
+      title: anime.title,
+      image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+      type: anime.type,
+      score: anime.score,
+      status: anime.status,
+      episodes: anime.episodes,
+      synopsis: anime.synopsis,
+      broadcast: anime.broadcast,
+      aired: anime.aired
+    }));
+
+    const pagination = response.data.pagination || {};
+
+    res.json({
+      data: data,
+      pagination: {
+        currentPage: pagination.current_page || parseInt(page),
+        totalPages: pagination.last_visible_page || 1,
+        totalItems: pagination.items?.total || data.length,
+        itemsPerPage: pagination.items?.per_page || 25,
+        hasNextPage: pagination.has_next_page || false,
+        hasPrevPage: (parseInt(page) > 1)
+      }
+    });
+  } catch (error) {
+    console.error('Jikan API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil anime yang sedang tayang' });
+  }
+};
+
 export const getPopular = async (req, res) => {
   try {
     const { type, page = 1 } = req.query;

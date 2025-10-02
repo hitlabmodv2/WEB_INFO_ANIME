@@ -3,7 +3,8 @@ import {
   getSchedule, 
   getCurrentSeason,
   getSeasonalAnime, 
-  getPopular, 
+  getPopular,
+  getCurrentlyAiring,
   searchAnime, 
   getAnimeDetail,
   getCharacters,
@@ -18,6 +19,7 @@ import {
 const router = express.Router();
 
 router.get('/schedule', getSchedule);
+router.get('/airing', getCurrentlyAiring);
 router.get('/new', getCurrentSeason);
 router.get('/season', getSeasonalAnime);
 router.get('/popular', getPopular);

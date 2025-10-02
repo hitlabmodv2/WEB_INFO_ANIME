@@ -7,10 +7,12 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
-- **Fixed White Screen Issue**: Replaced window.open() with modal/lightbox for Pictures tab - images now open in-page with smooth loading animation instead of showing white screen in new tab
-- **Image Modal Viewer**: Added full-screen modal for viewing anime pictures with loading indicator, click-outside to close, Escape key support, and error handling
-- **Always-Visible Captions**: Image captions now always visible (not just on hover) showing anime title, rating (score), and release schedule information
-- **Grouped Display by Type**: When "Semua" filter is selected, anime are organized into sections by type (TV, ONA, OVA, Movie, Special) with clear section headers showing type name and anime count
+- **Pagination System**: Replaced infinite scroll with proper pagination - now showing "Previous" and "Next" buttons with current page number for better navigation
+- **Filter by Type**: Each type filter (Semua, TV, ONA, OVA, Movie, Special) now works independently with pagination support - click "TV" to see only TV anime, "Movie" for movies, etc.
+- **Grouped Display**: "Semua" button shows all anime organized by type (TV, ONA, OVA, Movie, Special) with color-coded section headers
+- **Fixed White Screen Issue**: Replaced window.open() with modal/lightbox for Pictures tab - images now open in-page with smooth loading animation
+- **Image Modal Viewer**: Added full-screen modal for viewing anime pictures with loading indicator, click-outside to close, and Escape key support
+- **Always-Visible Captions**: Image captions now always visible showing anime title, rating (score), and release schedule information
 - **Enhanced Caption Info**: Each anime card displays title, type badge, score rating, and broadcast/release schedule when available
 - **Mobile-Optimized Filter Buttons**: Reduced button sizes to 5px-10px padding on mobile (0.7em font) for better mobile screen fit, scaling up on larger screens
 - **Type Section Headers**: Beautiful section headers with color-coded borders (blue for TV, pink for ONA, cyan for OVA, yellow for Movie, teal for Special)
