@@ -7,13 +7,18 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
+- **Always-Visible Captions**: Image captions now always visible (not just on hover) showing anime title, rating (score), and release schedule information
+- **Grouped Display by Type**: When "Semua" filter is selected, anime are organized into sections by type (TV, ONA, OVA, Movie, Special) with clear section headers showing type name and anime count
+- **Enhanced Caption Info**: Each anime card displays title, type badge, score rating, and broadcast/release schedule when available
+- **Mobile-Optimized Filter Buttons**: Reduced button sizes to 5px-10px padding on mobile (0.7em font) for better mobile screen fit, scaling up on larger screens
+- **Type Section Headers**: Beautiful section headers with color-coded borders (blue for TV, pink for ONA, cyan for OVA, yellow for Movie, teal for Special)
 - **Type Badge Indicators**: Visual badges on every anime card showing type (TV/ONA/OVA/Movie/Special) with unique gradient colors for easy identification
 - **Duplicate Prevention**: Fixed bug where duplicate images appeared during infinite scroll - now properly checks existing IDs before appending
-- **Image Grid Display**: Revamped to show only anime images in responsive grid layout with hover overlay showing title, type, and score
+- **Image Grid Display**: Revamped to show only anime images in responsive grid layout with always-visible captions
 - **Mini Filter Buttons**: Added compact type filter buttons (Semua, TV, ONA, OVA, Movie, Special) optimized for mobile with horizontal scroll
 - **Infinite Scroll**: Replaced pagination with infinite scroll - new anime automatically load when scrolling to bottom
 - **Smart Image Loading**: Individual loader for each image to prevent white screen, with lazy loading and fade-in animation
-- **Enhanced Loading States**: Improved loading animations for Pictures tab with proper skeleton loaders
+- **Enhanced Loading States**: Improved loading animations with proper skeleton loaders
 - **Auto-Update Maintained**: 5-minute auto-refresh still active and maintains current type filter selection
 - **Responsive Design**: Filter buttons and badges adjust size based on screen - smaller on mobile, larger on desktop
 - **Smooth Transitions**: All images fade in smoothly when loaded, improving user experience
