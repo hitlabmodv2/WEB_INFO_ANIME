@@ -7,11 +7,14 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 2, 2025)
 
 ### Latest Updates
-- **Pagination System**: Implemented complete pagination with 10 items per page across all tabs (Schedule, Latest, Popular, Season)
-- **Type Filtering**: Added universal anime type filters (TV, ONA, OVA, Movie, Special) with server-side filtering via Jikan API
+- **Smart Auto-Update**: Auto-refresh now maintains current page and filters - stays on page 2 with ONA filter during 5-minute auto-update
+- **Loading Bug Fix**: Fixed white screen issue during navigation to detail page and Pictures tab - now shows proper fullscreen loading animation
+- **Type Filtering Fix**: Fixed anime type filters (TV, ONA, OVA, Movie, Special) across all tabs with proper server-side and client-side filtering
+- **Schedule Filtering**: Implemented client-side type filtering for schedules endpoint (Jikan API limitation workaround)
+- **Improved Error Messages**: Enhanced error messages to show which anime type was selected when no data available
+- **Pagination System**: Complete pagination with 10 items per page across all tabs (Schedule, Latest, Popular, Season)
 - **Advanced Navigation**: 5 pagination buttons - First (⏮), Previous (←), Page Info, Next (→), Last (⏭) with auto-scroll to top
 - **Loading Animations**: Smooth 1-100% progress animation when navigating to anime details and returning to home page
-- **Enhanced UX**: Pagination positioned below content for better user flow
 
 ### Previous Updates
 - Implemented dedicated detail page (`detail.html`) with comprehensive anime information
