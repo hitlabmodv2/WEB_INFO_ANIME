@@ -6,6 +6,14 @@ The project features a web-based frontend that displays real-time anime schedule
 
 ## Recent Changes (October 2, 2025)
 
+### Latest Updates
+- **Pagination System**: Implemented complete pagination with 10 items per page across all tabs (Schedule, Latest, Popular, Season)
+- **Type Filtering**: Added universal anime type filters (TV, ONA, OVA, Movie, Special) with server-side filtering via Jikan API
+- **Advanced Navigation**: 5 pagination buttons - First (⏮), Previous (←), Page Info, Next (→), Last (⏭) with auto-scroll to top
+- **Loading Animations**: Smooth 1-100% progress animation when navigating to anime details and returning to home page
+- **Enhanced UX**: Pagination positioned below content for better user flow
+
+### Previous Updates
 - Implemented dedicated detail page (`detail.html`) with comprehensive anime information
 - Added 7 new API endpoints for MyAnimeList data: characters, episodes, videos, statistics, reviews, recommendations, and pictures
 - Enhanced error handling to properly manage Jikan API rate limits and server errors (response.ok checks before JSON parsing)
