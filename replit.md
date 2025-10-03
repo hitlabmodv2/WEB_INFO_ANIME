@@ -4,9 +4,29 @@ Nimeku API is a REST API service that provides anime information and streaming d
 
 The project features a web-based frontend that displays real-time anime schedules with auto-updates, anime search capabilities, and detailed anime information pages with tabbed navigation for characters, episodes, videos, stats, reviews, and recommendations.
 
-## Recent Changes (October 2, 2025)
+## Recent Changes (October 3, 2025)
 
 ### Latest Updates
+- **Type Badge System**: Implemented comprehensive type badge system across ALL tabs with gradient color-coding
+  - **TV Badge**: Blue gradient (`#2196F3` → `#1976D2`) for TV anime
+  - **Movie Badge**: Yellow gradient (`#FFC107` → `#FFA000`) for Movie anime
+  - **OVA Badge**: Cyan gradient (`#00BCD4` → `#0097A7`) for OVA anime
+  - **ONA Badge**: Pink gradient (`#E91E63` → `#C2185B`) for ONA anime
+  - **Special Badge**: Teal gradient (`#009688` → `#00796B`) for Special anime
+  - **Responsive Design**: Badges scale appropriately on mobile (0.6em font) and desktop (0.7em font)
+- **Fixed Type Filtering System**: Corrected API parameters for accurate filtering across all tabs
+  - **Schedule Tab (Jadwal)**: Now uses `/seasons/now` endpoint with `filter` parameter + full pagination support
+  - **Currently Airing (Sedang Tayang)**: Uses `filter` parameter with `status=airing` for filtering
+  - **Latest (Terbaru)**: Uses `filter` parameter for type filtering with pagination
+  - **Season (Musim)**: Uses `filter` parameter for `/seasons/{year}/{season}` endpoint
+  - **Popular (Populer)**: Uses `type` parameter for `/top/anime` endpoint
+- **Verified API Parameters**: All endpoints tested and verified with curl to ensure correct parameter usage
+  - Seasons endpoints (`/seasons/now`, `/seasons/{year}/{season}`): use `filter=<type>` parameter
+  - Top anime endpoint (`/top/anime`): uses `type=<type>` parameter
+- **Full Pagination Support**: All tabs now support proper pagination with distinct data sets per page
+- **Filter Consistency**: Type filters (Semua, TV, ONA, OVA, Movie, Special) work correctly across all tabs
+
+### Previous Updates (October 2, 2025)
 - **Schedule Page Enhancements**: Major UI/UX improvements to the Schedule (Jadwal) tab
   - **No Pagination**: Removed pagination controls (Previous/Next buttons) exclusively from Schedule tab for cleaner viewing
   - **Anime Thumbnails**: Added small poster images (45x63px mobile, 50x70px desktop, 60x84px tablet) to every schedule item with smooth hover zoom effect
