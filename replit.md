@@ -6,6 +6,16 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 3, 2025)
 
+- **Anime Type Statistics in Schedule** (v2.4): Comprehensive breakdown of anime by type
+  - Added real-time statistics display for all anime types: TV, ONA, OVA, Movie, Special
+  - Visual cards with icons showing count for each type in the schedule section
+  - Statistics appear when "Semua" (All) filter is selected on Schedule tab
+  - Responsive grid layout: 2 columns (mobile), 3 columns (tablet), 5 columns (desktop)
+  - Clean, modern design with gradient effects and hover animations
+  - Shows accurate counts including zero values for types not present in current season
+  - All data updates dynamically from MyAnimeList API via Jikan
+  - Helps users quickly see distribution of anime types for the current season
+
 - **Real-Time Total Counts & Pagination Info** (v2.3): Enhanced data visibility with live statistics
   - Added total anime count display in Schedule tab with real-time data from MyAnimeList
   - Displays total count per day (Senin-Minggu) with overall total anime terjadwal
