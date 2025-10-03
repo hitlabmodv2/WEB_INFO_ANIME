@@ -438,7 +438,10 @@ export const getPictures = async (req, res) => {
 
 export const getAnimeRecommendations = async (req, res) => {
   try {
-    const url = 'https://myanimelist.net/recommendations.php?s=recentrecs&t=anime';
+    const page = parseInt(req.query.page) || 1;
+    const show = 100;
+    
+    const url = `https://myanimelist.net/recommendations.php?s=recentrecs&t=anime&show=${(page - 1) * show}`;
     const response = await axios.get(url, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -469,14 +472,22 @@ export const getAnimeRecommendations = async (req, res) => {
           leftAnime.mal_id = leftAnime.url ? leftAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
           const leftImgAlt = leftLink.find('img').attr('alt') || '';
           leftAnime.title = leftImgAlt.replace('Anime: ', '').trim();
-          leftAnime.image = leftLink.find('img').attr('data-src') || leftLink.find('img').attr('src');
+          let leftImage = leftLink.find('img').attr('data-src') || leftLink.find('img').attr('src');
+          if (leftImage && leftImage.includes('/r/50x70/')) {
+            leftImage = leftImage.replace('/r/50x70/', '/');
+          }
+          leftAnime.image = leftImage;
           
           const rightLink = picSurrounds[1].find('a').first();
           rightAnime.url = rightLink.attr('href');
           rightAnime.mal_id = rightAnime.url ? rightAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
           const rightImgAlt = rightLink.find('img').attr('alt') || '';
           rightAnime.title = rightImgAlt.replace('Anime: ', '').trim();
-          rightAnime.image = rightLink.find('img').attr('data-src') || rightLink.find('img').attr('src');
+          let rightImage = rightLink.find('img').attr('data-src') || rightLink.find('img').attr('src');
+          if (rightImage && rightImage.includes('/r/50x70/')) {
+            rightImage = rightImage.replace('/r/50x70/', '/');
+          }
+          rightAnime.image = rightImage;
         }
         
         const recommendationText = $(element).text().trim();
@@ -507,10 +518,17 @@ export const getAnimeRecommendations = async (req, res) => {
       }
     });
 
+    const hasNextPage = recommendations.length >= show;
+
     res.json({
       success: true,
       count: recommendations.length,
-      data: recommendations
+      data: recommendations,
+      pagination: {
+        currentPage: page,
+        hasNextPage: hasNextPage,
+        show: show
+      }
     });
   } catch (error) {
     console.error('MyAnimeList Scraping Error:', error.message);
