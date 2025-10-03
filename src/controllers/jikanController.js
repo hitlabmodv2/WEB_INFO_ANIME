@@ -10,7 +10,11 @@ export const getSchedule = async (req, res) => {
       limit: 25
     };
     
-    const response = await axios.get(`${JIKAN_BASE}/schedules`, { params });
+    if (type && type !== 'all' && type !== '') {
+      params.filter = type.toLowerCase();
+    }
+    
+    const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
     
     const dayMapping = {
       'monday': 'Senin',
@@ -29,32 +33,25 @@ export const getSchedule = async (req, res) => {
       'sundays': 'Minggu'
     };
 
-    let formattedData = response.data.data
-      .filter(anime => {
-        if (!type || type === 'all' || type === '') {
-          return true;
-        }
-        return anime.type?.toLowerCase() === type.toLowerCase();
-      })
-      .map(anime => {
-        const day = anime.broadcast?.day || 'unknown';
-        const indonesianDay = dayMapping[day.toLowerCase()] || 'Tidak Diketahui';
-        
-        return {
-          mal_id: anime.mal_id,
-          title: anime.title,
-          image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
-          day: indonesianDay,
-          time: anime.broadcast?.time || 'TBA',
-          aired: anime.aired?.string || 'TBA',
-          airedFrom: anime.aired?.from || null,
-          episode: `Episodes: ${anime.episodes || '?'}`,
-          score: anime.score,
-          type: anime.type,
-          status: anime.status,
-          broadcast: anime.broadcast
-        };
-      });
+    let formattedData = response.data.data.map(anime => {
+      const day = anime.broadcast?.day || 'unknown';
+      const indonesianDay = dayMapping[day.toLowerCase()] || 'Tidak Diketahui';
+      
+      return {
+        mal_id: anime.mal_id,
+        title: anime.title,
+        image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+        day: indonesianDay,
+        time: anime.broadcast?.time || 'TBA',
+        aired: anime.aired?.string || 'TBA',
+        airedFrom: anime.aired?.from || null,
+        episode: `Episodes: ${anime.episodes || '?'}`,
+        score: anime.score,
+        type: anime.type,
+        status: anime.status,
+        broadcast: anime.broadcast
+      };
+    });
 
     const pagination = response.data.pagination || {};
 
@@ -63,7 +60,7 @@ export const getSchedule = async (req, res) => {
       pagination: {
         currentPage: pagination.current_page || parseInt(page),
         totalPages: pagination.last_visible_page || 1,
-        totalItems: formattedData.length,
+        totalItems: pagination.items?.total || formattedData.length,
         itemsPerPage: pagination.items?.per_page || 25,
         hasNextPage: pagination.has_next_page || false,
         hasPrevPage: (parseInt(page) > 1)
@@ -84,7 +81,7 @@ export const getCurrentSeason = async (req, res) => {
     };
     
     if (type && type !== 'all' && type !== '') {
-      params.filter = type;
+      params.filter = type.toLowerCase();
     }
     
     const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
@@ -130,7 +127,7 @@ export const getSeasonalAnime = async (req, res) => {
     };
     
     if (type && type !== 'all' && type !== '') {
-      params.filter = type;
+      params.filter = type.toLowerCase();
     }
 
     let url = `${JIKAN_BASE}/seasons/now`;
@@ -224,7 +221,7 @@ export const getCurrentlyAiring = async (req, res) => {
     };
     
     if (type && type !== 'all' && type !== '') {
-      params.type = type;
+      params.filter = type.toLowerCase();
     }
     
     const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
