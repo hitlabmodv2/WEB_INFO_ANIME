@@ -6,6 +6,25 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 3, 2025)
 
+- **Real-Time Total Counts & Pagination Info** (v2.3): Enhanced data visibility with live statistics
+  - Added total anime count display in Schedule tab with real-time data from MyAnimeList
+  - Displays total count per day (Senin-Minggu) with overall total anime terjadwal
+  - User Recommendations page shows total users count with real-time data
+  - Recommendations tab displays current page number, items per page (100), and next page availability
+  - All counters update dynamically from MyAnimeList API/scraping
+  - Beautiful gradient cards with icons for stats display
+  - Mobile-responsive design for all statistics cards
+
+- **Enhanced Loading Animations & Page Transitions** (v2.2): Modern loading UX improvements
+  - Added smooth page transition overlays with gradient animations to prevent white screen flash
+  - Implemented `navigateWithTransition()` function across all pages for consistent navigation UX
+  - Enhanced loading spinners with gradient shifts and modern bounce animations
+  - Page fade-in effects on load with `page-loaded` class and CSS animations
+  - Improved card hover effects with cubic-bezier easing for better visual feedback
+  - Skeleton loaders with shimmer effect for content loading states
+  - Modal animations with bounce and slide effects
+  - Full-page transition overlay prevents jarring white screens between page navigations
+
 - **User Recommendations & Profile Pages** (v2.0): Complete internal navigation system for browsing top users and their profiles
   - `/userrecs.html` displays top 50+ users ranked by recommendation count from MyAnimeList
   - Real-time scraping of user recommendation rankings (e.g., abystoma2 with 1,654 recommendations)
