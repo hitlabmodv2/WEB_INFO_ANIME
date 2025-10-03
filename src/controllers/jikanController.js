@@ -541,103 +541,66 @@ export const getAnimeRecommendations = async (req, res) => {
 
 export const getUserRecommendations = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const show = 100;
-    
-    const url = `https://myanimelist.net/recommendations.php?s=userrecs&t=anime&show=${(page - 1) * show}`;
+    const url = `https://myanimelist.net/recommendations.php?s=userrecs&t=anime`;
     const response = await axios.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5'
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Referer': 'https://myanimelist.net/'
       }
     });
     const html = response.data;
     const $ = load(html);
 
-    const recommendations = [];
+    const users = [];
     
-    const recTexts = $('.recommendations-user-recs-text');
-    
-    recTexts.each((index, element) => {
+    $('a[href*="/profile/"]').each((index, element) => {
       try {
-        const leftAnime = {};
-        const rightAnime = {};
+        const linkText = $(element).text().trim();
+        const href = $(element).attr('href');
         
-        const currentElement = $(element);
-        
-        const prevTable = currentElement.prev('table');
-        const picSurrounds = prevTable.find('.picSurround').toArray().map(el => $(el));
-        
-        if (picSurrounds.length >= 2) {
-          const leftLink = picSurrounds[0].find('a').first();
-          leftAnime.url = leftLink.attr('href');
-          leftAnime.mal_id = leftAnime.url ? leftAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
-          const leftImgAlt = leftLink.find('img').attr('alt') || '';
-          leftAnime.title = leftImgAlt.replace('Anime: ', '').trim();
-          let leftImage = leftLink.find('img').attr('data-src') || leftLink.find('img').attr('src');
-          if (leftImage && leftImage.includes('/r/50x70/')) {
-            leftImage = leftImage.replace('/r/50x70/', '/');
-          }
-          leftAnime.image = leftImage;
+        if (href && href.startsWith('/profile/')) {
+          const parentText = $(element).parent().text().trim();
+          const match = parentText.match(/(.+?)\s+with\s+(\d+)\s+recommendation/i);
           
-          const rightLink = picSurrounds[1].find('a').first();
-          rightAnime.url = rightLink.attr('href');
-          rightAnime.mal_id = rightAnime.url ? rightAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
-          const rightImgAlt = rightLink.find('img').attr('alt') || '';
-          rightAnime.title = rightImgAlt.replace('Anime: ', '').trim();
-          let rightImage = rightLink.find('img').attr('data-src') || rightLink.find('img').attr('src');
-          if (rightImage && rightImage.includes('/r/50x70/')) {
-            rightImage = rightImage.replace('/r/50x70/', '/');
+          if (match) {
+            const username = match[1].trim();
+            const count = parseInt(match[2]);
+            
+            if (!users.find(u => u.username === username)) {
+              users.push({
+                username,
+                recommendationCount: count,
+                profileUrl: `https://myanimelist.net${href}`,
+                type: 'anime'
+              });
+            }
           }
-          rightAnime.image = rightImage;
-        }
-        
-        const recommendationText = $(element).text().trim();
-        
-        const userSection = $(element).next('.lightLink.spaceit');
-        const userLink = userSection.find('a[href^="/profile/"]');
-        const username = userLink.text().trim();
-        const userUrl = userLink.attr('href');
-        
-        const fullText = userSection.text();
-        const dateMatch = fullText.match(/- (.+)$/);
-        const dateText = dateMatch ? dateMatch[1].trim() : '';
-        
-        if (leftAnime.title && rightAnime.title && recommendationText) {
-          recommendations.push({
-            leftAnime,
-            rightAnime,
-            recommendation: recommendationText,
-            user: {
-              username,
-              url: userUrl ? `https://myanimelist.net${userUrl}` : null
-            },
-            date: dateText
-          });
         }
       } catch (err) {
-        console.error('Error parsing user recommendation item:', err.message);
+        console.error('Error parsing user recommendation:', err.message);
       }
     });
 
-    const hasNextPage = recommendations.length >= show;
+    users.sort((a, b) => b.recommendationCount - a.recommendationCount);
 
     res.json({
       success: true,
-      count: recommendations.length,
-      data: recommendations,
+      count: users.length,
+      data: users,
       pagination: {
-        currentPage: page,
-        hasNextPage: hasNextPage,
-        show: show
+        currentPage: 1,
+        hasNextPage: false
       }
     });
   } catch (error) {
     console.error('MyAnimeList User Recommendations Scraping Error:', error.message);
+    console.error('Error details:', error.response?.status, error.response?.statusText);
     res.status(500).json({ 
       success: false,
-      error: 'Gagal mengambil user recommendations dari MyAnimeList' 
+      error: 'Gagal mengambil user recommendations dari MyAnimeList',
+      details: error.message
     });
   }
 };
@@ -667,76 +630,90 @@ export const getUserProfile = async (req, res) => {
     const profile = {};
     
     profile.username = username;
-    profile.avatar = $('.user-image img').attr('src') || $('.user-image img').attr('data-src');
-    profile.lastOnline = $('.user-status-data .user-status').text().trim();
-    profile.gender = $('span:contains("Gender:")').parent().text().replace('Gender:', '').trim();
-    profile.birthday = $('span:contains("Birthday:")').parent().text().replace('Birthday:', '').trim();
-    profile.location = $('span:contains("Location:")').parent().text().replace('Location:', '').trim();
-    profile.joined = $('span:contains("Joined:")').parent().text().replace('Joined:', '').trim();
+    profile.avatar = $('.user-image img').attr('data-src') || $('.user-image img').attr('src');
+    profile.lastOnline = $('.user-status').first().text().trim();
     
-    const statistics = {};
-    $('.stats.anime .stat-score .di-tc').each((i, el) => {
-      const label = $(el).find('.di-ib').text().trim().toLowerCase().replace(/\s+/g, '_');
-      const value = $(el).contents().filter(function() {
-        return this.type === 'text';
-      }).text().trim();
-      if (label && value) {
-        statistics[label] = value;
+    $('.user-profile-about .user-status-data .user-status-data-block').each((i, el) => {
+      const text = $(el).text();
+      if (text.includes('Gender:')) {
+        profile.gender = text.replace('Gender:', '').trim();
+      } else if (text.includes('Birthday:')) {
+        profile.birthday = text.replace('Birthday:', '').trim();
+      } else if (text.includes('Location:')) {
+        profile.location = text.replace('Location:', '').trim();
+      } else if (text.includes('Joined:')) {
+        profile.joined = text.replace('Joined:', '').trim();
       }
     });
     
+    const userStats = $('.user-statistics-stats');
+    profile.forumPosts = userStats.find('div:contains("Forum Posts:")').text().replace('Forum Posts:', '').trim();
+    profile.reviews = userStats.find('div:contains("Reviews:")').text().replace('Reviews:', '').trim();
+    profile.recommendations = userStats.find('div:contains("Recommendations:")').text().replace('Recommendations:', '').trim();
+    profile.blogPosts = userStats.find('div:contains("Blog Posts:")').text().replace('Blog Posts:', '').trim();
+    profile.clubs = userStats.find('div:contains("Clubs:")').text().replace('Clubs:', '').trim();
+    
     const animeStats = {};
-    $('.stats.anime .stat-score').first().find('.di-tc').each((i, el) => {
+    const animeStatsSection = $('.stats.anime');
+    
+    animeStatsSection.find('.stat-score .di-tc').each((i, el) => {
       const text = $(el).text().trim();
       if (text.includes('Days:')) {
         animeStats.days = text.replace('Days:', '').trim();
       } else if (text.includes('Mean Score:')) {
         animeStats.meanScore = text.replace('Mean Score:', '').trim();
+      } else if (text.includes('Watching:')) {
+        animeStats.watching = text.replace('Watching:', '').trim();
+      } else if (text.includes('Completed:')) {
+        animeStats.completed = text.replace('Completed:', '').trim();
+      } else if (text.includes('On-Hold:')) {
+        animeStats.onHold = text.replace('On-Hold:', '').trim();
+      } else if (text.includes('Dropped:')) {
+        animeStats.dropped = text.replace('Dropped:', '').trim();
+      } else if (text.includes('Plan to Watch:')) {
+        animeStats.planToWatch = text.replace('Plan to Watch:', '').trim();
+      } else if (text.includes('Total Entries:')) {
+        animeStats.totalEntries = text.replace('Total Entries:', '').trim();
+      } else if (text.includes('Rewatched:')) {
+        animeStats.rewatched = text.replace('Rewatched:', '').trim();
+      } else if (text.includes('Episodes:')) {
+        animeStats.episodes = text.replace('Episodes:', '').trim();
       }
     });
-    
-    animeStats.watching = $('.anime .stat-score .di-tc:contains("Watching")').text().replace('Watching', '').trim();
-    animeStats.completed = $('.anime .stat-score .di-tc:contains("Completed")').text().replace('Completed', '').trim();
-    animeStats.onHold = $('.anime .stat-score .di-tc:contains("On-Hold")').text().replace('On-Hold', '').trim();
-    animeStats.dropped = $('.anime .stat-score .di-tc:contains("Dropped")').text().replace('Dropped', '').trim();
-    animeStats.planToWatch = $('.anime .stat-score .di-tc:contains("Plan to Watch")').text().replace('Plan to Watch', '').trim();
-    animeStats.totalEntries = $('.anime .stat-score .di-tc:contains("Total Entries")').text().replace('Total Entries', '').trim();
-    animeStats.rewatched = $('.anime .stat-score .di-tc:contains("Rewatched")').text().replace('Rewatched', '').trim();
-    animeStats.episodes = $('.anime .stat-score .di-tc:contains("Episodes")').text().replace('Episodes', '').trim();
     
     profile.animeStats = animeStats;
     
     const favorites = {
       anime: [],
       characters: [],
-      people: []
+      people: [],
+      manga: []
     };
     
-    $('.favorites-list.anime .favorites-list-item').each((i, el) => {
-      const name = $(el).find('.data a').text().trim();
-      const url = $(el).find('.data a').attr('href');
-      const image = $(el).find('.data img').attr('data-src') || $(el).find('.data img').attr('src');
-      if (name) {
-        favorites.anime.push({ name, url, image });
-      }
-    });
-    
-    $('.favorites-list.characters .favorites-list-item').each((i, el) => {
-      const name = $(el).find('.data a').text().trim();
-      const url = $(el).find('.data a').attr('href');
-      const image = $(el).find('.data img').attr('data-src') || $(el).find('.data img').attr('src');
-      if (name) {
-        favorites.characters.push({ name, url, image });
-      }
-    });
-    
-    $('.favorites-list.people .favorites-list-item').each((i, el) => {
-      const name = $(el).find('.data a').text().trim();
-      const url = $(el).find('.data a').attr('href');
-      const image = $(el).find('.data img').attr('data-src') || $(el).find('.data img').attr('src');
-      if (name) {
-        favorites.people.push({ name, url, image });
-      }
+    $('ul.favorites-list').each((i, el) => {
+      const heading = $(el).prev('h5').text().toLowerCase();
+      
+      $(el).find('li').each((j, item) => {
+        const link = $(item).find('a');
+        const name = link.text().trim();
+        const url = link.attr('href');
+        const img = $(item).find('img, .image');
+        const image = img.attr('data-src') || img.attr('src') || img.css('background-image')?.replace(/url\(['"]?(.*?)['"]?\)/i, '$1');
+        
+        if (name) {
+          const favItem = { name, url: url ? `https://myanimelist.net${url}` : null, image };
+          
+          if (heading.includes('anime')) {
+            favorites.anime.push(favItem);
+          } else if (heading.includes('character')) {
+            favorites.characters.push(favItem);
+          } else if (heading.includes('people')) {
+            favorites.people.push(favItem);
+          } else if (heading.includes('manga')) {
+            favorites.manga.push(favItem);
+          }
+        }
+      });
     });
     
     profile.favorites = favorites;

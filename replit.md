@@ -6,15 +6,16 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 3, 2025)
 
-- **User Recommendations & Profile Pages**: Added internal pages for browsing user recommendations and viewing user profiles
-  - New `/userrecs.html` page displays top user recommendations from MyAnimeList (scraped from userrecs page)
-  - New `/profile.html` page shows detailed user profiles with stats, favorites, and personal information
-  - Scrapes data directly from MyAnimeList using cheerio for accurate real-time data
+- **User Recommendations & Profile Pages** (v2.0): Complete internal navigation system for browsing top users and their profiles
+  - `/userrecs.html` displays top 50+ users ranked by recommendation count from MyAnimeList
+  - Real-time scraping of user recommendation rankings (e.g., abystoma2 with 1,654 recommendations)
+  - Grid layout with card design showing username and recommendation count
+  - Clickable user cards navigate to internal profile pages
+  - `/profile.html` shows user profiles with anime statistics and favorites
+  - API endpoints: `/api/user-recommendations` (GET list) and `/api/user-profile/:username` (GET profile data)
   - Beautiful gradient design matching MyAnimeList brand colors (#2E51A2)
-  - Clickable usernames in recommendations navigate to internal profile pages
-  - Full pagination support (100 recommendations per page)
-  - Back navigation buttons for easy app flow
-  - API endpoints: `/api/user-recommendations` and `/api/user-profile/:username`
+  - Fully integrated navigation - no external redirects to MyAnimeList
+  - Data scraped in real-time using Cheerio for accuracy
 
 - **MyAnimeList Quick Link Button**: Updated to navigate to internal user recommendations page
   - Button now opens `/userrecs.html` within the app instead of external link
