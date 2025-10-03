@@ -17,6 +17,7 @@ import {
   getAnimeRecommendations,
   getUserRecommendations,
   getUserProfile,
+  getUserProfileRecommendations,
   getTypeStatistics
 } from '../controllers/jikanController.js';
 
@@ -40,5 +41,6 @@ router.get('/pictures/:id', getPictures);
 router.get('/mal-recommendations', getAnimeRecommendations);
 router.get('/user-recommendations', getUserRecommendations);
 router.get('/user-profile/:username', getUserProfile);
+router.get('/user-profile/:username/recommendations', getUserProfileRecommendations);
 
 export default router;

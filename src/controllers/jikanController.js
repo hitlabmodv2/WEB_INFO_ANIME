@@ -790,3 +790,109 @@ export const getUserProfile = async (req, res) => {
     });
   }
 };
+
+export const getUserProfileRecommendations = async (req, res) => {
+  try {
+    const { username } = req.params;
+    const page = req.query.page || 1;
+    
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username diperlukan'
+      });
+    }
+    
+    const url = `https://myanimelist.net/profile/${username}/recommendations?p=${page}`;
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+      }
+    });
+    const html = response.data;
+    const $ = load(html);
+
+    const recommendations = [];
+    
+    $('p.profile-user-recs-text').each((index, element) => {
+      try {
+        const descPara = $(element);
+        const description = descPara.text().trim();
+        
+        const table = descPara.prev('table');
+        if (!table.length) return;
+        
+        const leftCell = table.find('td').eq(0);
+        const rightCell = table.find('td').eq(1);
+        
+        const leftLink = leftCell.find('a[title]').first();
+        const leftTitle = leftLink.find('strong').text().trim() || leftLink.text().trim();
+        const leftUrl = leftLink.attr('href');
+        const leftImg = leftCell.find('img[data-src], .picSurround img, img').first();
+        const leftImage = leftImg.attr('data-src') || leftImg.attr('src') || '';
+        
+        const rightLink = rightCell.find('a[title]').first();
+        const rightTitle = rightLink.find('strong').text().trim() || rightLink.text().trim();
+        const rightUrl = rightLink.attr('href');
+        const rightImg = rightCell.find('img[data-src], .picSurround img, img').first();
+        const rightImage = rightImg.attr('data-src') || rightImg.attr('src') || '';
+        
+        const lightLink = descPara.next('.lightLink');
+        const metadata = lightLink.text().trim();
+        const dateMatch = metadata.match(/([A-Z][a-z]{2}\s+\d{1,2},?\s+\d{4})/);
+        const date = dateMatch ? dateMatch[1] : '';
+        
+        const typeMatch = leftUrl ? (leftUrl.includes('/anime/') ? 'anime' : 'manga') : '';
+        
+        if (leftTitle && rightTitle && description && description.length > 5) {
+          recommendations.push({
+            type: typeMatch,
+            left: {
+              title: leftTitle,
+              url: leftUrl || '',
+              image: leftImage
+            },
+            right: {
+              title: rightTitle,
+              url: rightUrl || '',
+              image: rightImage
+            },
+            description,
+            date
+          });
+        }
+      } catch (err) {
+        console.error('Error parsing recommendation:', err.message);
+      }
+    });
+    
+    const totalText = $('.normal_header h2').text();
+    const totalMatch = totalText.match(/Total\s+Recommendations:\s+([\d,]+)/);
+    const total = totalMatch ? totalMatch[1] : '0';
+    
+    const hasNext = $('a:contains("More Recommendations")').length > 0;
+    const hasPrev = $('a:contains("Previous")').length > 0;
+    
+    res.json({
+      success: true,
+      username,
+      total,
+      page: parseInt(page),
+      count: recommendations.length,
+      data: recommendations,
+      pagination: {
+        hasNextPage: hasNext,
+        hasPreviousPage: hasPrev
+      }
+    });
+  } catch (error) {
+    console.error('MyAnimeList User Recommendations Scraping Error:', error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Gagal mengambil user recommendations dari MyAnimeList',
+      details: error.message
+    });
+  }
+};
