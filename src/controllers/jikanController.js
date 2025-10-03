@@ -538,3 +538,218 @@ export const getAnimeRecommendations = async (req, res) => {
     });
   }
 };
+
+export const getUserRecommendations = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const show = 100;
+    
+    const url = `https://myanimelist.net/recommendations.php?s=userrecs&t=anime&show=${(page - 1) * show}`;
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+      }
+    });
+    const html = response.data;
+    const $ = load(html);
+
+    const recommendations = [];
+    
+    const recTexts = $('.recommendations-user-recs-text');
+    
+    recTexts.each((index, element) => {
+      try {
+        const leftAnime = {};
+        const rightAnime = {};
+        
+        const currentElement = $(element);
+        
+        const prevTable = currentElement.prev('table');
+        const picSurrounds = prevTable.find('.picSurround').toArray().map(el => $(el));
+        
+        if (picSurrounds.length >= 2) {
+          const leftLink = picSurrounds[0].find('a').first();
+          leftAnime.url = leftLink.attr('href');
+          leftAnime.mal_id = leftAnime.url ? leftAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
+          const leftImgAlt = leftLink.find('img').attr('alt') || '';
+          leftAnime.title = leftImgAlt.replace('Anime: ', '').trim();
+          let leftImage = leftLink.find('img').attr('data-src') || leftLink.find('img').attr('src');
+          if (leftImage && leftImage.includes('/r/50x70/')) {
+            leftImage = leftImage.replace('/r/50x70/', '/');
+          }
+          leftAnime.image = leftImage;
+          
+          const rightLink = picSurrounds[1].find('a').first();
+          rightAnime.url = rightLink.attr('href');
+          rightAnime.mal_id = rightAnime.url ? rightAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
+          const rightImgAlt = rightLink.find('img').attr('alt') || '';
+          rightAnime.title = rightImgAlt.replace('Anime: ', '').trim();
+          let rightImage = rightLink.find('img').attr('data-src') || rightLink.find('img').attr('src');
+          if (rightImage && rightImage.includes('/r/50x70/')) {
+            rightImage = rightImage.replace('/r/50x70/', '/');
+          }
+          rightAnime.image = rightImage;
+        }
+        
+        const recommendationText = $(element).text().trim();
+        
+        const userSection = $(element).next('.lightLink.spaceit');
+        const userLink = userSection.find('a[href^="/profile/"]');
+        const username = userLink.text().trim();
+        const userUrl = userLink.attr('href');
+        
+        const fullText = userSection.text();
+        const dateMatch = fullText.match(/- (.+)$/);
+        const dateText = dateMatch ? dateMatch[1].trim() : '';
+        
+        if (leftAnime.title && rightAnime.title && recommendationText) {
+          recommendations.push({
+            leftAnime,
+            rightAnime,
+            recommendation: recommendationText,
+            user: {
+              username,
+              url: userUrl ? `https://myanimelist.net${userUrl}` : null
+            },
+            date: dateText
+          });
+        }
+      } catch (err) {
+        console.error('Error parsing user recommendation item:', err.message);
+      }
+    });
+
+    const hasNextPage = recommendations.length >= show;
+
+    res.json({
+      success: true,
+      count: recommendations.length,
+      data: recommendations,
+      pagination: {
+        currentPage: page,
+        hasNextPage: hasNextPage,
+        show: show
+      }
+    });
+  } catch (error) {
+    console.error('MyAnimeList User Recommendations Scraping Error:', error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Gagal mengambil user recommendations dari MyAnimeList' 
+    });
+  }
+};
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const { username } = req.params;
+    
+    if (!username) {
+      return res.status(400).json({
+        success: false,
+        error: 'Username diperlukan'
+      });
+    }
+    
+    const url = `https://myanimelist.net/profile/${username}`;
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+      }
+    });
+    const html = response.data;
+    const $ = load(html);
+
+    const profile = {};
+    
+    profile.username = username;
+    profile.avatar = $('.user-image img').attr('src') || $('.user-image img').attr('data-src');
+    profile.lastOnline = $('.user-status-data .user-status').text().trim();
+    profile.gender = $('span:contains("Gender:")').parent().text().replace('Gender:', '').trim();
+    profile.birthday = $('span:contains("Birthday:")').parent().text().replace('Birthday:', '').trim();
+    profile.location = $('span:contains("Location:")').parent().text().replace('Location:', '').trim();
+    profile.joined = $('span:contains("Joined:")').parent().text().replace('Joined:', '').trim();
+    
+    const statistics = {};
+    $('.stats.anime .stat-score .di-tc').each((i, el) => {
+      const label = $(el).find('.di-ib').text().trim().toLowerCase().replace(/\s+/g, '_');
+      const value = $(el).contents().filter(function() {
+        return this.type === 'text';
+      }).text().trim();
+      if (label && value) {
+        statistics[label] = value;
+      }
+    });
+    
+    const animeStats = {};
+    $('.stats.anime .stat-score').first().find('.di-tc').each((i, el) => {
+      const text = $(el).text().trim();
+      if (text.includes('Days:')) {
+        animeStats.days = text.replace('Days:', '').trim();
+      } else if (text.includes('Mean Score:')) {
+        animeStats.meanScore = text.replace('Mean Score:', '').trim();
+      }
+    });
+    
+    animeStats.watching = $('.anime .stat-score .di-tc:contains("Watching")').text().replace('Watching', '').trim();
+    animeStats.completed = $('.anime .stat-score .di-tc:contains("Completed")').text().replace('Completed', '').trim();
+    animeStats.onHold = $('.anime .stat-score .di-tc:contains("On-Hold")').text().replace('On-Hold', '').trim();
+    animeStats.dropped = $('.anime .stat-score .di-tc:contains("Dropped")').text().replace('Dropped', '').trim();
+    animeStats.planToWatch = $('.anime .stat-score .di-tc:contains("Plan to Watch")').text().replace('Plan to Watch', '').trim();
+    animeStats.totalEntries = $('.anime .stat-score .di-tc:contains("Total Entries")').text().replace('Total Entries', '').trim();
+    animeStats.rewatched = $('.anime .stat-score .di-tc:contains("Rewatched")').text().replace('Rewatched', '').trim();
+    animeStats.episodes = $('.anime .stat-score .di-tc:contains("Episodes")').text().replace('Episodes', '').trim();
+    
+    profile.animeStats = animeStats;
+    
+    const favorites = {
+      anime: [],
+      characters: [],
+      people: []
+    };
+    
+    $('.favorites-list.anime .favorites-list-item').each((i, el) => {
+      const name = $(el).find('.data a').text().trim();
+      const url = $(el).find('.data a').attr('href');
+      const image = $(el).find('.data img').attr('data-src') || $(el).find('.data img').attr('src');
+      if (name) {
+        favorites.anime.push({ name, url, image });
+      }
+    });
+    
+    $('.favorites-list.characters .favorites-list-item').each((i, el) => {
+      const name = $(el).find('.data a').text().trim();
+      const url = $(el).find('.data a').attr('href');
+      const image = $(el).find('.data img').attr('data-src') || $(el).find('.data img').attr('src');
+      if (name) {
+        favorites.characters.push({ name, url, image });
+      }
+    });
+    
+    $('.favorites-list.people .favorites-list-item').each((i, el) => {
+      const name = $(el).find('.data a').text().trim();
+      const url = $(el).find('.data a').attr('href');
+      const image = $(el).find('.data img').attr('data-src') || $(el).find('.data img').attr('src');
+      if (name) {
+        favorites.people.push({ name, url, image });
+      }
+    });
+    
+    profile.favorites = favorites;
+    
+    res.json({
+      success: true,
+      data: profile
+    });
+  } catch (error) {
+    console.error('MyAnimeList User Profile Scraping Error:', error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Gagal mengambil profil user dari MyAnimeList' 
+    });
+  }
+};
