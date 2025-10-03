@@ -4,6 +4,20 @@ Nimeku API is a REST API service that provides anime information and streaming d
 
 The project includes a web-based frontend featuring real-time anime schedules with auto-updates, search capabilities, and detailed anime information pages with tabbed navigation for characters, episodes, videos, stats, reviews, recommendations, and pictures. The ambition is to provide a comprehensive, user-friendly anime information portal focused on the Indonesian audience.
 
+## Recent Updates (October 3, 2025)
+
+- **MyAnimeList Quick Link Button**: Added direct link button to MyAnimeList User Recommendations page
+  - Beautiful blue gradient button matching MyAnimeList brand colors (#2E51A2)
+  - Opens https://myanimelist.net/recommendations.php?s=userrecs in new tab
+  - Responsive design with hover effects and mobile optimization
+  - Located at top of Rekomendasi tab for easy access to browse top user recommendations
+
+- **Recommendations Pagination & Image Quality**: Enhanced recommendation viewing experience
+  - Full pagination support with Previous/Next buttons (100 recommendations per page)
+  - Upgraded to high-resolution anime posters (140x200px desktop, 120x170px mobile)
+  - Fixed pagination state - currentPage resets to 1 when switching to Rekomendasi tab
+  - Improved mobile design with larger, crisper images
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
