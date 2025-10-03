@@ -7,6 +7,14 @@ The project features a web-based frontend that displays real-time anime schedule
 ## Recent Changes (October 3, 2025)
 
 ### Latest Updates
+- **Anime Recommendations Feature (NEW)**: Added new tab for real-time anime recommendations from MyAnimeList
+  - **MyAnimeList Scraper**: Direct web scraping from https://myanimelist.net/recommendations.php?s=recentrecs&t=anime
+  - **Real-Time Data**: Fetches 100 most recent anime recommendations from the community
+  - **Recommendation Cards**: Beautiful card layout showing two anime being compared with user's recommendation text
+  - **User Attribution**: Displays username, profile link, and timestamp for each recommendation
+  - **Responsive Design**: Mobile-optimized cards with proper image loading and error handling
+  - **API Endpoint**: `/api/mal-recommendations` provides JSON response with anime pairs and recommendation metadata
+  - **Navigation Tab**: Added "💡 Rekomendasi" tab to main navigation for easy access
 - **Type Badge System**: Implemented comprehensive type badge system across ALL tabs with gradient color-coding
   - **TV Badge**: Blue gradient (`#2196F3` → `#1976D2`) for TV anime
   - **Movie Badge**: Yellow gradient (`#FFC107` → `#FFA000`) for Movie anime
