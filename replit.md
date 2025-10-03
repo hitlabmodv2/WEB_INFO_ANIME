@@ -6,6 +6,16 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 3, 2025)
 
+- **User Profile Recommendations Display** (v2.5): Real-time user recommendation history with images
+  - Added new API endpoint `/api/user-profile/:username/recommendations` for scraping MyAnimeList profile recommendations
+  - Displays user's complete recommendation history with anime/manga pairs, images, descriptions, and dates
+  - Card-based layout with side-by-side anime images and description text below
+  - Mobile-responsive design with breakpoints for tablet (768px) and mobile (480px)
+  - Successfully extracts 30 recommendations per page from MyAnimeList profiles
+  - Shows real-time data including recommendation text and submission dates
+  - Integrated into existing profile page with seamless navigation
+  - Note: Scraper relies on MyAnimeList's current HTML structure (typical fragility for scraping-based features)
+
 - **Anime Type Statistics in Schedule** (v2.4.2): Comprehensive breakdown of anime by type
   - Added real-time statistics display for all anime types: TV, ONA, OVA, Movie, Special
   - Visual cards with icons showing count for each type in the schedule section
