@@ -6,11 +6,21 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 3, 2025)
 
-- **MyAnimeList Quick Link Button**: Added direct link button to MyAnimeList User Recommendations page
-  - Beautiful blue gradient button matching MyAnimeList brand colors (#2E51A2)
-  - Opens https://myanimelist.net/recommendations.php?s=userrecs in new tab
+- **User Recommendations & Profile Pages**: Added internal pages for browsing user recommendations and viewing user profiles
+  - New `/userrecs.html` page displays top user recommendations from MyAnimeList (scraped from userrecs page)
+  - New `/profile.html` page shows detailed user profiles with stats, favorites, and personal information
+  - Scrapes data directly from MyAnimeList using cheerio for accurate real-time data
+  - Beautiful gradient design matching MyAnimeList brand colors (#2E51A2)
+  - Clickable usernames in recommendations navigate to internal profile pages
+  - Full pagination support (100 recommendations per page)
+  - Back navigation buttons for easy app flow
+  - API endpoints: `/api/user-recommendations` and `/api/user-profile/:username`
+
+- **MyAnimeList Quick Link Button**: Updated to navigate to internal user recommendations page
+  - Button now opens `/userrecs.html` within the app instead of external link
+  - Maintains beautiful blue gradient design matching MyAnimeList brand colors (#2E51A2)
   - Responsive design with hover effects and mobile optimization
-  - Located at top of Rekomendasi tab for easy access to browse top user recommendations
+  - Located at top of Rekomendasi tab for seamless navigation
 
 - **Recommendations Pagination & Image Quality**: Enhanced recommendation viewing experience
   - Full pagination support with Previous/Next buttons (100 recommendations per page)
@@ -28,7 +38,7 @@ Preferred communication style: Simple, everyday language.
 
 **Technology Stack**: Vanilla JavaScript, HTML5, CSS3
 
-**Design Pattern**: Multi-page application (MPA) with `index.html` for main navigation and `detail.html` for comprehensive anime details. Client-side routing uses URL parameters. Real-time updates are handled via JavaScript `fetch` API with 5-minute auto-refresh intervals. Error handling is robust for API rate limits and server errors.
+**Design Pattern**: Multi-page application (MPA) with `index.html` for main navigation, `detail.html` for comprehensive anime details, `userrecs.html` for user recommendations, and `profile.html` for user profiles. Client-side routing uses URL parameters. Real-time updates are handled via JavaScript `fetch` API with 5-minute auto-refresh intervals. Error handling is robust for API rate limits and server errors.
 
 **UI/UX Decisions**:
 - Tabbed navigation for main sections and detail pages.
@@ -46,8 +56,8 @@ Preferred communication style: Simple, everyday language.
 **Architecture Pattern**: RESTful API with controller-based routing.
 
 **Core Components**:
-- **API Routes**: `jikanRoutes.js` for Jikan API integration and `apiRoutes.js` for web scraping (currently a backup).
-- **Controllers**: `jikanController.js` for transforming Jikan API responses to Indonesian, and `scrapingController.js` for web scraping logic (legacy/backup).
+- **API Routes**: `jikanRoutes.js` for Jikan API integration, MyAnimeList scraping endpoints (user recommendations, user profiles), and `apiRoutes.js` for web scraping (currently a backup).
+- **Controllers**: `jikanController.js` for transforming Jikan API responses to Indonesian and scraping MyAnimeList user data, and `scrapingController.js` for web scraping logic (legacy/backup).
 - **Utilities**: `fetchPage.js` for HTTP requests with rate limiting, and `helper.js` for HTML parsing.
 
 **Data Flow**: Frontend requests `/api/*` endpoints, Express routes to the controller, data is fetched from Jikan API, transformed (e.g., localized), and sent as a JSON response to the frontend.
@@ -78,6 +88,7 @@ Preferred communication style: Simple, everyday language.
 ## Data Sources
 
 - **Primary**: Jikan API (MyAnimeList) - Structured JSON responses.
+- **MyAnimeList Direct Scraping**: User recommendations page and user profile pages (scraped with cheerio).
 - **Secondary**: samehadaku.mba - Indonesian anime subtitle website (scraping logic exists as a fallback).
 
 ## Hosting & Deployment
