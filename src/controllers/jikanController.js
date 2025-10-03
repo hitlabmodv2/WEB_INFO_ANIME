@@ -96,7 +96,14 @@ export const getCurrentSeason = async (req, res) => {
       episodes: anime.episodes,
       synopsis: anime.synopsis,
       broadcast: anime.broadcast,
-      aired: anime.aired
+      aired: anime.aired,
+      duration: anime.duration,
+      members: anime.members,
+      genres: anime.genres,
+      studios: anime.studios,
+      source: anime.source,
+      themes: anime.themes,
+      demographics: anime.demographics
     }));
 
     const pagination = response.data.pagination || {};
@@ -148,7 +155,14 @@ export const getSeasonalAnime = async (req, res) => {
       episodes: anime.episodes,
       synopsis: anime.synopsis,
       broadcast: anime.broadcast,
-      aired: anime.aired
+      aired: anime.aired,
+      duration: anime.duration,
+      members: anime.members,
+      genres: anime.genres,
+      studios: anime.studios,
+      source: anime.source,
+      themes: anime.themes,
+      demographics: anime.demographics
     }));
 
     const pagination = response.data.pagination || {};
@@ -236,7 +250,14 @@ export const getCurrentlyAiring = async (req, res) => {
       episodes: anime.episodes,
       synopsis: anime.synopsis,
       broadcast: anime.broadcast,
-      aired: anime.aired
+      aired: anime.aired,
+      duration: anime.duration,
+      members: anime.members,
+      genres: anime.genres,
+      studios: anime.studios,
+      source: anime.source,
+      themes: anime.themes,
+      demographics: anime.demographics
     }));
 
     const pagination = response.data.pagination || {};
@@ -281,7 +302,16 @@ export const getPopular = async (req, res) => {
       status: anime.status,
       rank: anime.rank,
       broadcast: anime.broadcast,
-      aired: anime.aired
+      aired: anime.aired,
+      episodes: anime.episodes,
+      synopsis: anime.synopsis,
+      duration: anime.duration,
+      members: anime.members,
+      genres: anime.genres,
+      studios: anime.studios,
+      source: anime.source,
+      themes: anime.themes,
+      demographics: anime.demographics
     }));
 
     const pagination = response.data.pagination || {};
