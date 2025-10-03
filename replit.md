@@ -15,7 +15,9 @@ The project includes a web-based frontend featuring real-time anime schedules wi
   - Shows accurate counts including zero values for types not present in current season
   - All data updates dynamically from MyAnimeList API via Jikan
   - **Icon Fix**: Fixed MOVIE (🎬) and SPECIAL (⭐) icons by using uppercase type keys consistently
-  - Counts are calculated from current page data to avoid API rate limiting
+  - **Accurate Real-Time Totals**: New backend endpoint fetches complete statistics across ALL anime in season (not just current page)
+  - API requests use sequential delays (350ms) to respect Jikan rate limits (3 req/sec)
+  - Statistics cached for 5 minutes to minimize API calls while maintaining real-time accuracy
   - Helps users quickly see distribution of anime types for the current season
 
 - **Real-Time Total Counts & Pagination Info** (v2.3): Enhanced data visibility with live statistics

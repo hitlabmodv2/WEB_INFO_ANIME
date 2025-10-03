@@ -4,6 +4,10 @@ import { fetchPage } from '../utils/fetchPage.js';
 
 const JIKAN_BASE = 'https://api.jikan.moe/v4';
 
+let typeStatsCache = null;
+let cacheTimestamp = null;
+const CACHE_DURATION = 5 * 60 * 1000;
+
 export const getSchedule = async (req, res) => {
   try {
     const { type, page = 1 } = req.query;
@@ -124,6 +128,50 @@ export const getCurrentSeason = async (req, res) => {
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mengambil anime terbaru' });
+  }
+};
+
+export const getTypeStatistics = async (req, res) => {
+  try {
+    const now = Date.now();
+    
+    if (typeStatsCache && cacheTimestamp && (now - cacheTimestamp < CACHE_DURATION)) {
+      return res.json(typeStatsCache);
+    }
+
+    const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    
+    const types = ['tv', 'ona', 'ova', 'movie', 'special'];
+    const statistics = {};
+    
+    for (let i = 0; i < types.length; i++) {
+      const type = types[i];
+      try {
+        if (i > 0) {
+          await delay(350);
+        }
+        
+        const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { 
+          params: { filter: type, limit: 1 }
+        });
+        statistics[type.toUpperCase()] = response.data.pagination?.items?.total || 0;
+      } catch (error) {
+        console.error(`Error fetching ${type} count:`, error.message);
+        statistics[type.toUpperCase()] = 0;
+      }
+    }
+
+    await delay(350);
+    const totalResponse = await axios.get(`${JIKAN_BASE}/seasons/now`, { params: { limit: 1 } });
+    statistics.TOTAL = totalResponse.data.pagination?.items?.total || 0;
+
+    typeStatsCache = statistics;
+    cacheTimestamp = now;
+
+    res.json(statistics);
+  } catch (error) {
+    console.error('Type Statistics API Error:', error.message);
+    res.status(500).json({ error: 'Gagal mengambil statistik tipe anime' });
   }
 };
 

@@ -16,12 +16,14 @@ import {
   getPictures,
   getAnimeRecommendations,
   getUserRecommendations,
-  getUserProfile
+  getUserProfile,
+  getTypeStatistics
 } from '../controllers/jikanController.js';
 
 const router = express.Router();
 
 router.get('/schedule', getSchedule);
+router.get('/type-statistics', getTypeStatistics);
 router.get('/airing', getCurrentlyAiring);
 router.get('/new', getCurrentSeason);
 router.get('/season', getSeasonalAnime);
