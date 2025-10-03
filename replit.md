@@ -29,6 +29,13 @@ The project includes a web-based frontend featuring real-time anime schedules wi
   - Fixed pagination state - currentPage resets to 1 when switching to Rekomendasi tab
   - Improved mobile design with larger, crisper images
 
+- **Complete Profile Data & UX Improvements** (v2.1): Enhanced profile pages with complete real-time data
+  - Fixed profile scraper to correctly extract all user information (Last Online, Gender, Birthday, Location, Joined)
+  - Integrated Jikan API v4 for complete anime statistics (Days Watched, Mean Score, Watching, Completed, On-Hold, Dropped, Plan to Watch, Total Entries, Rewatched, Episodes)
+  - Added Interest Stacks to user statistics display alongside Forum Posts, Reviews, Recommendations, Blog Posts, and Clubs
+  - Added loading overlay indicator when navigating from user recommendations to profile for better UX
+  - Mobile-responsive design with optimized layouts for all screen sizes (tablets and phones)
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
