@@ -631,55 +631,67 @@ export const getUserProfile = async (req, res) => {
     
     profile.username = username;
     profile.avatar = $('.user-image img').attr('data-src') || $('.user-image img').attr('src');
-    profile.lastOnline = $('.user-status').first().text().trim();
     
-    $('.user-profile-about .user-status-data .user-status-data-block').each((i, el) => {
-      const text = $(el).text();
-      if (text.includes('Gender:')) {
-        profile.gender = text.replace('Gender:', '').trim();
-      } else if (text.includes('Birthday:')) {
-        profile.birthday = text.replace('Birthday:', '').trim();
-      } else if (text.includes('Location:')) {
-        profile.location = text.replace('Location:', '').trim();
-      } else if (text.includes('Joined:')) {
-        profile.joined = text.replace('Joined:', '').trim();
+    $('ul.user-status li').each((i, el) => {
+      const text = $(el).text().trim();
+      if (text.startsWith('Last Online')) {
+        profile.lastOnline = text.replace('Last Online', '').trim();
+      } else if (text.startsWith('Gender')) {
+        profile.gender = text.replace('Gender', '').trim();
+      } else if (text.startsWith('Birthday')) {
+        profile.birthday = text.replace('Birthday', '').trim();
+      } else if (text.startsWith('Location')) {
+        profile.location = text.replace('Location', '').trim();
+      } else if (text.startsWith('Joined')) {
+        profile.joined = text.replace('Joined', '').trim();
       }
     });
     
-    const userStats = $('.user-statistics-stats');
-    profile.forumPosts = userStats.find('div:contains("Forum Posts:")').text().replace('Forum Posts:', '').trim();
-    profile.reviews = userStats.find('div:contains("Reviews:")').text().replace('Reviews:', '').trim();
-    profile.recommendations = userStats.find('div:contains("Recommendations:")').text().replace('Recommendations:', '').trim();
-    profile.blogPosts = userStats.find('div:contains("Blog Posts:")').text().replace('Blog Posts:', '').trim();
-    profile.clubs = userStats.find('div:contains("Clubs:")').text().replace('Clubs:', '').trim();
+    const extractNumber = (text) => {
+      const match = text.match(/[\d,]+/);
+      return match ? match[0] : '0';
+    };
+    
+    const statsLinks = $('ul.user-status.border-top li a');
+    statsLinks.each((i, el) => {
+      const text = $(el).text();
+      if (text.includes('Forum Posts')) {
+        profile.forumPosts = extractNumber(text);
+      } else if (text.includes('Reviews')) {
+        profile.reviews = extractNumber(text);
+      } else if (text.includes('Recommendations')) {
+        profile.recommendations = extractNumber(text);
+      } else if (text.includes('Interest Stacks')) {
+        profile.interestStacks = extractNumber(text);
+      } else if (text.includes('Blog Posts')) {
+        profile.blogPosts = extractNumber(text);
+      } else if (text.includes('Clubs')) {
+        profile.clubs = extractNumber(text);
+      }
+    });
     
     const animeStats = {};
-    const animeStatsSection = $('.stats.anime');
     
-    animeStatsSection.find('.stat-score .di-tc').each((i, el) => {
-      const text = $(el).text().trim();
-      if (text.includes('Days:')) {
-        animeStats.days = text.replace('Days:', '').trim();
-      } else if (text.includes('Mean Score:')) {
-        animeStats.meanScore = text.replace('Mean Score:', '').trim();
-      } else if (text.includes('Watching:')) {
-        animeStats.watching = text.replace('Watching:', '').trim();
-      } else if (text.includes('Completed:')) {
-        animeStats.completed = text.replace('Completed:', '').trim();
-      } else if (text.includes('On-Hold:')) {
-        animeStats.onHold = text.replace('On-Hold:', '').trim();
-      } else if (text.includes('Dropped:')) {
-        animeStats.dropped = text.replace('Dropped:', '').trim();
-      } else if (text.includes('Plan to Watch:')) {
-        animeStats.planToWatch = text.replace('Plan to Watch:', '').trim();
-      } else if (text.includes('Total Entries:')) {
-        animeStats.totalEntries = text.replace('Total Entries:', '').trim();
-      } else if (text.includes('Rewatched:')) {
-        animeStats.rewatched = text.replace('Rewatched:', '').trim();
-      } else if (text.includes('Episodes:')) {
-        animeStats.episodes = text.replace('Episodes:', '').trim();
+    try {
+      const jikanStatsUrl = `https://api.jikan.moe/v4/users/${username}/statistics`;
+      const jikanStatsResponse = await axios.get(jikanStatsUrl);
+      
+      if (jikanStatsResponse.data && jikanStatsResponse.data.data && jikanStatsResponse.data.data.anime) {
+        const animeData = jikanStatsResponse.data.data.anime;
+        animeStats.days = animeData.days_watched?.toString() || '0';
+        animeStats.meanScore = animeData.mean_score?.toString() || '0';
+        animeStats.watching = animeData.watching?.toString() || '0';
+        animeStats.completed = animeData.completed?.toString() || '0';
+        animeStats.onHold = animeData.on_hold?.toString() || '0';
+        animeStats.dropped = animeData.dropped?.toString() || '0';
+        animeStats.planToWatch = animeData.plan_to_watch?.toString() || '0';
+        animeStats.totalEntries = animeData.total_entries?.toString() || '0';
+        animeStats.rewatched = animeData.rewatched?.toString() || '0';
+        animeStats.episodes = animeData.episodes_watched?.toString() || '0';
       }
-    });
+    } catch (statsError) {
+      console.log('Could not fetch anime stats from Jikan API:', statsError.message);
+    }
     
     profile.animeStats = animeStats;
     
