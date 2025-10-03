@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { load } from 'cheerio';
+import { fetchPage } from '../utils/fetchPage.js';
 
 const JIKAN_BASE = 'https://api.jikan.moe/v4';
 
@@ -431,5 +433,90 @@ export const getPictures = async (req, res) => {
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mengambil gambar' });
+  }
+};
+
+export const getAnimeRecommendations = async (req, res) => {
+  try {
+    const url = 'https://myanimelist.net/recommendations.php?s=recentrecs&t=anime';
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+      }
+    });
+    const html = response.data;
+    const $ = load(html);
+
+    const recommendations = [];
+    
+    const recTexts = $('.recommendations-user-recs-text');
+    
+    recTexts.each((index, element) => {
+      try {
+        const leftAnime = {};
+        const rightAnime = {};
+        
+        const currentElement = $(element);
+        
+        const prevTable = currentElement.prev('table');
+        const picSurrounds = prevTable.find('.picSurround').toArray().map(el => $(el));
+        
+        if (picSurrounds.length >= 2) {
+          const leftLink = picSurrounds[0].find('a').first();
+          leftAnime.url = leftLink.attr('href');
+          leftAnime.mal_id = leftAnime.url ? leftAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
+          const leftImgAlt = leftLink.find('img').attr('alt') || '';
+          leftAnime.title = leftImgAlt.replace('Anime: ', '').trim();
+          leftAnime.image = leftLink.find('img').attr('data-src') || leftLink.find('img').attr('src');
+          
+          const rightLink = picSurrounds[1].find('a').first();
+          rightAnime.url = rightLink.attr('href');
+          rightAnime.mal_id = rightAnime.url ? rightAnime.url.match(/\/anime\/(\d+)\//)?.[1] : null;
+          const rightImgAlt = rightLink.find('img').attr('alt') || '';
+          rightAnime.title = rightImgAlt.replace('Anime: ', '').trim();
+          rightAnime.image = rightLink.find('img').attr('data-src') || rightLink.find('img').attr('src');
+        }
+        
+        const recommendationText = $(element).text().trim();
+        
+        const userSection = $(element).next('.lightLink.spaceit');
+        const userLink = userSection.find('a[href^="/profile/"]');
+        const username = userLink.text().trim();
+        const userUrl = userLink.attr('href');
+        
+        const fullText = userSection.text();
+        const dateMatch = fullText.match(/- (.+)$/);
+        const dateText = dateMatch ? dateMatch[1].trim() : '';
+        
+        if (leftAnime.title && rightAnime.title && recommendationText) {
+          recommendations.push({
+            leftAnime,
+            rightAnime,
+            recommendation: recommendationText,
+            user: {
+              username,
+              url: userUrl ? `https://myanimelist.net${userUrl}` : null
+            },
+            date: dateText
+          });
+        }
+      } catch (err) {
+        console.error('Error parsing recommendation item:', err.message);
+      }
+    });
+
+    res.json({
+      success: true,
+      count: recommendations.length,
+      data: recommendations
+    });
+  } catch (error) {
+    console.error('MyAnimeList Scraping Error:', error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Gagal mengambil rekomendasi anime dari MyAnimeList' 
+    });
   }
 };

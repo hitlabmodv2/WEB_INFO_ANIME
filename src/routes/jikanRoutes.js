@@ -13,7 +13,8 @@ import {
   getStats,
   getReviews,
   getRecommendations,
-  getPictures
+  getPictures,
+  getAnimeRecommendations
 } from '../controllers/jikanController.js';
 
 const router = express.Router();
@@ -32,5 +33,6 @@ router.get('/stats/:id', getStats);
 router.get('/reviews/:id', getReviews);
 router.get('/recommendations/:id', getRecommendations);
 router.get('/pictures/:id', getPictures);
+router.get('/mal-recommendations', getAnimeRecommendations);
 
 export default router;
