@@ -8,6 +8,29 @@ let typeStatsCache = null;
 let cacheTimestamp = null;
 const CACHE_DURATION = 5 * 60 * 1000;
 
+let genresCache = null;
+let genresCacheTimestamp = null;
+const GENRES_CACHE_DURATION = 24 * 60 * 60 * 1000;
+
+let genreAnimeCache = {};
+let genreAnimeCacheTimestamp = {};
+const GENRE_ANIME_CACHE_DURATION = 10 * 60 * 1000;
+
+let lastRequestTime = 0;
+const MIN_REQUEST_DELAY = 1000;
+
+async function delayIfNeeded() {
+  const now = Date.now();
+  const timeSinceLastRequest = now - lastRequestTime;
+  
+  if (timeSinceLastRequest < MIN_REQUEST_DELAY) {
+    const delay = MIN_REQUEST_DELAY - timeSinceLastRequest;
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+  
+  lastRequestTime = Date.now();
+}
+
 export const getSchedule = async (req, res) => {
   try {
     const { type, page = 1 } = req.query;
@@ -920,6 +943,18 @@ export const getUserProfileRecommendations = async (req, res) => {
 
 export const getGenres = async (req, res) => {
   try {
+    const now = Date.now();
+    
+    if (genresCache && genresCacheTimestamp && (now - genresCacheTimestamp < GENRES_CACHE_DURATION)) {
+      return res.json({
+        success: true,
+        data: genresCache,
+        cached: true
+      });
+    }
+    
+    await delayIfNeeded();
+    
     const response = await axios.get(`${JIKAN_BASE}/genres/anime`);
     const genres = response.data.data || [];
     
@@ -930,12 +965,24 @@ export const getGenres = async (req, res) => {
       url: genre.url
     }));
     
+    genresCache = formattedGenres;
+    genresCacheTimestamp = now;
+    
     res.json({
       success: true,
       data: formattedGenres
     });
   } catch (error) {
     console.error('Jikan Genres Error:', error.message);
+    
+    if (error.response?.status === 429) {
+      return res.status(429).json({ 
+        success: false,
+        error: 'Terlalu banyak request. Silakan tunggu sebentar dan coba lagi.',
+        details: 'Rate limit exceeded'
+      });
+    }
+    
     res.status(500).json({ 
       success: false,
       error: 'Gagal mengambil daftar genre dari MyAnimeList',
@@ -948,6 +995,19 @@ export const getAnimeByGenre = async (req, res) => {
   try {
     const { genreId } = req.params;
     const { page = 1 } = req.query;
+    
+    const cacheKey = `${genreId}-${page}`;
+    const now = Date.now();
+    
+    if (genreAnimeCache[cacheKey] && genreAnimeCacheTimestamp[cacheKey] && 
+        (now - genreAnimeCacheTimestamp[cacheKey] < GENRE_ANIME_CACHE_DURATION)) {
+      return res.json({
+        ...genreAnimeCache[cacheKey],
+        cached: true
+      });
+    }
+    
+    await delayIfNeeded();
     
     const params = {
       genres: genreId,
@@ -979,7 +1039,7 @@ export const getAnimeByGenre = async (req, res) => {
     
     const pagination = response.data.pagination || {};
     
-    res.json({
+    const responseData = {
       success: true,
       data: animeList,
       pagination: {
@@ -990,9 +1050,23 @@ export const getAnimeByGenre = async (req, res) => {
         hasNextPage: pagination.has_next_page || false,
         hasPrevPage: (parseInt(page) > 1)
       }
-    });
+    };
+    
+    genreAnimeCache[cacheKey] = responseData;
+    genreAnimeCacheTimestamp[cacheKey] = now;
+    
+    res.json(responseData);
   } catch (error) {
     console.error('Jikan Anime by Genre Error:', error.message);
+    
+    if (error.response?.status === 429) {
+      return res.status(429).json({ 
+        success: false,
+        error: 'Terlalu banyak request. Silakan tunggu sebentar dan coba lagi.',
+        details: 'Rate limit exceeded'
+      });
+    }
+    
     res.status(500).json({ 
       success: false,
       error: 'Gagal mengambil anime berdasarkan genre',

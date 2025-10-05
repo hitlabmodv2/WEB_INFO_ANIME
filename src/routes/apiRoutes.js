@@ -11,7 +11,9 @@ import {
   getAnimeDetail,
   getEpisode,
   getAZList,
-  getStreamLink
+  getStreamLink,
+  getMALGenres,
+  getMALAnimeByGenre
 } from "../controllers/scrapingController.js";
 
 const router = express.Router();
@@ -25,6 +27,8 @@ router.get("/azlist", getAZList);
 router.get("/genres", getGenres);
 router.get("/genre/:genreId", getAnimeByGenre);
 router.get("/genre/:genreId/page/:pageNumber", getAnimeByGenre);
+router.get("/mal-genres-scrape", getMALGenres);
+router.get("/mal-genres-scrape/:genreId", getMALAnimeByGenre);
 router.get("/search/:keyword", getSearch);
 router.get("/search/:keyword/page/:pageNumber", getSearch);
 router.get("/detail/:animeId", getAnimeDetail);

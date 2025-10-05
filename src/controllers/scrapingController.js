@@ -301,6 +301,124 @@ export const getAZList = async (req, res) => {
   }
 };
 
+export const getMALGenres = async (req, res) => {
+  try {
+    const url = "https://myanimelist.net/anime.php";
+    const html = await fetchPage(url);
+    const $ = load(html);
+
+    const genreList = [];
+    
+    $('div.genre-link.ga-click').each((index, element) => {
+      const anchor = $(element).find('a');
+      const name = anchor.text().trim();
+      const href = anchor.attr('href');
+      
+      if (href && name) {
+        const genreIdMatch = href.match(/genre\/(\d+)/);
+        if (genreIdMatch) {
+          const mal_id = parseInt(genreIdMatch[1]);
+          genreList.push({
+            mal_id,
+            name,
+            url: `https://myanimelist.net${href}`
+          });
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      data: genreList
+    });
+  } catch (error) {
+    console.error("Error fetching MAL genres:", error.message);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to fetch genres from MyAnimeList",
+      details: error.message
+    });
+  }
+};
+
+export const getMALAnimeByGenre = async (req, res) => {
+  try {
+    const { genreId } = req.params;
+    const { page = 1 } = req.query;
+    const limit = 50;
+    const show = (parseInt(page) - 1) * limit;
+    
+    const url = `https://myanimelist.net/anime/genre/${genreId}?page=${page}`;
+    const html = await fetchPage(url);
+    const $ = load(html);
+
+    const animeList = [];
+    
+    $('div.js-categories-seasonal').find('tr').each((index, element) => {
+      if (index === 0) return;
+      
+      const titleLink = $(element).find('td:nth-child(1) a.hoverinfo_trigger');
+      const image = $(element).find('td:nth-child(1) img').attr('data-src') || $(element).find('td:nth-child(1) img').attr('src');
+      const title = titleLink.text().trim();
+      const animeUrl = titleLink.attr('href');
+      
+      if (!title || !animeUrl) return;
+      
+      const malIdMatch = animeUrl.match(/\/anime\/(\d+)/);
+      if (!malIdMatch) return;
+      
+      const mal_id = parseInt(malIdMatch[1]);
+      const type = $(element).find('td:nth-child(2)').text().trim();
+      const episodes = $(element).find('td:nth-child(3)').text().trim();
+      const scoreText = $(element).find('td:nth-child(4)').text().trim();
+      const score = scoreText === 'N/A' ? 'N/A' : parseFloat(scoreText) || 'N/A';
+      const membersText = $(element).find('td:nth-child(5)').text().trim().replace(/,/g, '');
+      const members = parseInt(membersText) || 0;
+      
+      animeList.push({
+        mal_id,
+        title,
+        image: image || 'https://cdn.myanimelist.net/images/qm_50.gif',
+        synopsis: '',
+        score,
+        type,
+        episodes,
+        status: '',
+        aired: '',
+        members,
+        genres: [],
+        studios: [],
+        source: '',
+        themes: [],
+        demographics: []
+      });
+    });
+
+    const hasNextPage = $('a.next').length > 0;
+    const totalPages = parseInt($('div.normal_header span small').text().match(/of (\d+)/)?.[1] || page);
+
+    res.json({
+      success: true,
+      data: animeList,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: totalPages,
+        totalItems: animeList.length,
+        itemsPerPage: limit,
+        hasNextPage: hasNextPage,
+        hasPrevPage: parseInt(page) > 1
+      }
+    });
+  } catch (error) {
+    console.error("Error fetching MAL anime by genre:", error.message);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to fetch anime from MyAnimeList",
+      details: error.message
+    });
+  }
+};
+
 export const getGenres = async (req, res) => {
   try {
     const url = "https://samehadaku.mba/daftar-anime-2";
