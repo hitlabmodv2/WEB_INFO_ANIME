@@ -6,6 +6,18 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 5, 2025)
 
+- **Genre Browser with MyAnimeList Data** (v2.12): Real-time genre listing and filtering from MyAnimeList API
+  - Added Genre tab (🎭) in main navigation for browsing anime by genre
+  - Displays 79 genres from Jikan API with real-time anime count per genre (e.g., Action: 5680, Romance: 2201)
+  - Smart genre search with fuzzy matching using Levenshtein distance algorithm
+  - Auto-complete suggestions showing matching genres with anime counts
+  - Genre detail page displays anime with images, synopsis, scores, and member counts from MyAnimeList
+  - Fully responsive grid layout: 2 columns (mobile), 3 columns (tablet 768px+), 4 columns (desktop 1024px+)
+  - Complete dark mode styling for genre cards, search, and suggestions
+  - Pagination support for browsing large genre collections
+  - Backend endpoints: `/api/mal-genres` (list all genres) and `/api/mal-genres/:genreId` (anime by genre)
+  - Mobile-optimized with smooth transitions and hover effects
+
 - **Complete Dark Mode Coverage** (v2.11): Fixed dark mode for all pages with full text visibility
   - Added dark mode toggle button to profile.html and userrecs.html pages
   - Comprehensive dark mode styling for all elements in profile and user recommendations pages
