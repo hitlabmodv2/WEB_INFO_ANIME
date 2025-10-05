@@ -6,6 +6,14 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 5, 2025)
 
+- **UI Improvements & Bug Fixes** (v2.9): Enhanced mobile display and dark mode fixes
+  - Fixed character images in detail page - changed object-fit from cover to contain for proper mobile display
+  - Added dark mode styling for synopsis box (.synopsis-box) to properly support dark theme
+  - Removed anime icon from main header for cleaner, more professional look
+  - Enhanced footer styling with improved spacing, shadows, and hover effects
+  - Improved footer responsiveness and dark mode appearance
+  - Cleaned up unused CSS (anime-icon selectors and keyframe animations)
+
 - **Dark/Light Mode Toggle & Anime Icon** (v2.8): Professional dark mode feature with animated toggle button
   - Added theme toggle button in top right corner of header with sun/moon icons
   - Smooth icon transition animations (rotate and scale effects)
