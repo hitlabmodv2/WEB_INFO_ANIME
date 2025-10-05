@@ -6,6 +6,18 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 5, 2025)
 
+- **Dynamic Time-Based Backgrounds** (v2.7): Beautiful Kimi no Nawa landscape backgrounds that change with real-time
+  - Added 4 stunning landscape images from Kimi no Nawa anime theme stored in public/img/
+  - Background automatically changes based on real-time clock:
+    - 5-11 AM: Morning sunrise landscape (bg-pagi.jpg)
+    - 11 AM-3 PM: Bright afternoon sky (bg-siang.jpg)
+    - 3-6 PM: Beautiful sunset evening (bg-sore.jpg)
+    - 6 PM-5 AM: Peaceful night stars (bg-malam.jpg)
+  - Implemented background-manager.js that updates every 60 seconds
+  - Dark overlay (rgba 0,0,0,0.3) ensures content readability over backgrounds
+  - Applied to all pages: index, detail, profile, and user recommendations
+  - Creates immersive anime atmosphere matching time of day
+
 - **Anime Website Favicon** (v2.6): Professional anime icon for browser tabs
   - Added favicon.png to all website pages (index, detail, profile, user recommendations)
   - Icon sourced from Flaticon with anime-themed design
