@@ -22,7 +22,7 @@ Preferred communication style: Simple, everyday language.
 - Pagination for navigation.
 - Image modal viewer.
 - Integrated YouTube video player modal.
-- Dynamic time-based background images.
+- Dynamic time-based background system with 40 Kimi no Nawa anime scenes (10 per time period: pagi/siang/sore/malam) that rotate every minute based on Asia/Jakarta timezone.
 - Comprehensive dark mode styling with a persistent toggle.
 - Genre browser with fuzzy search and auto-complete.
 
