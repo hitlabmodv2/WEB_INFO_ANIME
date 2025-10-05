@@ -6,6 +6,20 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 5, 2025)
 
+- **Complete Dark Mode Coverage** (v2.11): Fixed dark mode for all pages with full text visibility
+  - Added dark mode toggle button to profile.html and userrecs.html pages
+  - Comprehensive dark mode styling for all elements in profile and user recommendations pages
+  - Fixed text visibility issues in dark mode across all pages
+  - All text colors now properly contrasted in dark mode (#e0e0e0, #a5b4fc, #9ca3af)
+  - Dark mode preference now persists across all pages via localStorage
+  - Theme toggle functionality integrated into profile.js and userrecs.js
+  - Consistent dark theme color palette across entire application (#2d2d44 cards, #1a1a2e background)
+  - All buttons, cards, and UI elements now fully support dark/light theme toggle
+  - Fixed loading states and error messages to be readable in dark mode
+  - Profile statistics, favorites, and recommendations all properly styled for dark theme
+  - User recommendations page fully styled with dark mode support
+  - Ensured all gradients and shadows work properly in dark mode
+
 - **Mobile UX & Video Player** (v2.10): Enhanced mobile experience and integrated video player
   - Improved character grid layout for mobile - single column with larger images (70x95px)
   - Added responsive breakpoints for character display (mobile: 1 col, tablet: 2 cols, desktop: 3+ cols)
