@@ -441,7 +441,17 @@ export const searchAnime = async (req, res) => {
       type: anime.type,
       score: anime.score,
       status: anime.status,
-      synopsis: anime.synopsis
+      episodes: anime.episodes,
+      synopsis: anime.synopsis,
+      broadcast: anime.broadcast,
+      aired: anime.aired,
+      duration: anime.duration,
+      members: anime.members,
+      genres: anime.genres,
+      studios: anime.studios,
+      source: anime.source,
+      themes: anime.themes,
+      demographics: anime.demographics
     }));
 
     res.json(data);
