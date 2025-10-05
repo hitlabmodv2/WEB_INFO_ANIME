@@ -6,6 +6,15 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 5, 2025)
 
+- **Mobile UX & Video Player** (v2.10): Enhanced mobile experience and integrated video player
+  - Improved character grid layout for mobile - single column with larger images (70x95px)
+  - Added responsive breakpoints for character display (mobile: 1 col, tablet: 2 cols, desktop: 3+ cols)
+  - Integrated YouTube video player modal - videos play directly in website without redirecting
+  - Video modal with responsive design and smooth animations for all screen sizes
+  - Fixed video modal positioning to display at top with proper centering
+  - Comprehensive dark mode styling for all detail page elements (sidebar, tabs, cards, stats)
+  - All UI elements now properly support dark/light theme toggle
+
 - **UI Improvements & Bug Fixes** (v2.9): Enhanced mobile display and dark mode fixes
   - Fixed character images in detail page - changed object-fit from cover to contain for proper mobile display
   - Added dark mode styling for synopsis box (.synopsis-box) to properly support dark theme
