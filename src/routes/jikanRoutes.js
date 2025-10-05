@@ -18,7 +18,9 @@ import {
   getUserRecommendations,
   getUserProfile,
   getUserProfileRecommendations,
-  getTypeStatistics
+  getTypeStatistics,
+  getGenres,
+  getAnimeByGenre
 } from '../controllers/jikanController.js';
 
 const router = express.Router();
@@ -42,5 +44,7 @@ router.get('/mal-recommendations', getAnimeRecommendations);
 router.get('/user-recommendations', getUserRecommendations);
 router.get('/user-profile/:username', getUserProfile);
 router.get('/user-profile/:username/recommendations', getUserProfileRecommendations);
+router.get('/mal-genres', getGenres);
+router.get('/mal-genres/:genreId', getAnimeByGenre);
 
 export default router;

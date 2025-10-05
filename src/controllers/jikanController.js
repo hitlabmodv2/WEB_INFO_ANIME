@@ -917,3 +917,86 @@ export const getUserProfileRecommendations = async (req, res) => {
     });
   }
 };
+
+export const getGenres = async (req, res) => {
+  try {
+    const response = await axios.get(`${JIKAN_BASE}/genres/anime`);
+    const genres = response.data.data || [];
+    
+    const formattedGenres = genres.map(genre => ({
+      mal_id: genre.mal_id,
+      name: genre.name,
+      count: genre.count,
+      url: genre.url
+    }));
+    
+    res.json({
+      success: true,
+      data: formattedGenres
+    });
+  } catch (error) {
+    console.error('Jikan Genres Error:', error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Gagal mengambil daftar genre dari MyAnimeList',
+      details: error.message
+    });
+  }
+};
+
+export const getAnimeByGenre = async (req, res) => {
+  try {
+    const { genreId } = req.params;
+    const { page = 1 } = req.query;
+    
+    const params = {
+      genres: genreId,
+      page: parseInt(page),
+      limit: 25,
+      order_by: 'members',
+      sort: 'desc'
+    };
+    
+    const response = await axios.get(`${JIKAN_BASE}/anime`, { params });
+    
+    const animeList = response.data.data.map(anime => ({
+      mal_id: anime.mal_id,
+      title: anime.title,
+      image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+      synopsis: anime.synopsis || 'Sinopsis tidak tersedia',
+      score: anime.score || 'N/A',
+      type: anime.type,
+      episodes: anime.episodes || '?',
+      status: anime.status,
+      aired: anime.aired?.string || 'TBA',
+      members: anime.members,
+      genres: anime.genres || [],
+      studios: anime.studios || [],
+      source: anime.source || '',
+      themes: anime.themes || [],
+      demographics: anime.demographics || []
+    }));
+    
+    const pagination = response.data.pagination || {};
+    
+    res.json({
+      success: true,
+      data: animeList,
+      pagination: {
+        currentPage: pagination.current_page || parseInt(page),
+        totalPages: pagination.last_visible_page || 1,
+        totalItems: pagination.items?.total || animeList.length,
+        itemsPerPage: pagination.items?.per_page || 25,
+        hasNextPage: pagination.has_next_page || false,
+        hasPrevPage: (parseInt(page) > 1)
+      }
+    });
+  } catch (error) {
+    console.error('Jikan Anime by Genre Error:', error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Gagal mengambil anime berdasarkan genre',
+      details: error.message
+    });
+  }
+};
