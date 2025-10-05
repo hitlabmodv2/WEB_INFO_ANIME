@@ -140,30 +140,51 @@ export const getTypeStatistics = async (req, res) => {
     }
 
     const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
+    let allAnime = [];
+    let page = 1;
+    let hasNextPage = true;
     
-    const types = ['tv', 'ona', 'ova', 'movie', 'special'];
-    const statistics = {};
-    
-    for (let i = 0; i < types.length; i++) {
-      const type = types[i];
+    while (hasNextPage && page <= 5) {
       try {
-        if (i > 0) {
-          await delay(350);
+        if (page > 1) {
+          await delay(500);
         }
         
         const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { 
-          params: { filter: type, limit: 1 }
+          params: { 
+            page: page,
+            limit: 25
+          }
         });
-        statistics[type.toUpperCase()] = response.data.pagination?.items?.total || 0;
+        
+        if (response.data && response.data.data) {
+          allAnime = allAnime.concat(response.data.data);
+          hasNextPage = response.data.pagination?.has_next_page || false;
+          page++;
+        } else {
+          hasNextPage = false;
+        }
       } catch (error) {
-        console.error(`Error fetching ${type} count:`, error.message);
-        statistics[type.toUpperCase()] = 0;
+        console.error(`Error fetching page ${page}:`, error.message);
+        hasNextPage = false;
       }
     }
 
-    await delay(350);
-    const totalResponse = await axios.get(`${JIKAN_BASE}/seasons/now`, { params: { limit: 1 } });
-    statistics.TOTAL = totalResponse.data.pagination?.items?.total || 0;
+    const statistics = {
+      TV: 0,
+      ONA: 0,
+      OVA: 0,
+      MOVIE: 0,
+      SPECIAL: 0,
+      TOTAL: allAnime.length
+    };
+    
+    allAnime.forEach(anime => {
+      const type = anime.type?.toUpperCase();
+      if (statistics.hasOwnProperty(type)) {
+        statistics[type]++;
+      }
+    });
 
     typeStatsCache = statistics;
     cacheTimestamp = now;
