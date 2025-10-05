@@ -6,6 +6,18 @@ The project includes a web-based frontend featuring real-time anime schedules wi
 
 ## Recent Updates (October 5, 2025)
 
+- **Dark/Light Mode Toggle & Anime Icon** (v2.8): Professional dark mode feature with animated toggle button
+  - Added theme toggle button in top right corner of header with sun/moon icons
+  - Smooth icon transition animations (rotate and scale effects)
+  - Comprehensive dark mode styling for all UI elements (64+ CSS rules)
+  - Dark theme uses modern color palette (#2d2d44 cards, #a5b4fc accents, #1a1a2e background)
+  - Theme preference saved to localStorage and persists across sessions
+  - Replaced emoji 📺 with custom anime SVG icon (64x64px)
+  - Cute anime character design with gradient purple colors matching site theme
+  - Floating animation effect on anime icon for dynamic feel
+  - Fully responsive design for mobile, tablet, and desktop screens
+  - Toggle button positioned absolutely in header for consistent placement
+
 - **Dynamic Time-Based Backgrounds** (v2.7): Beautiful Kimi no Nawa landscape backgrounds that change with real-time
   - Added 4 stunning landscape images from Kimi no Nawa anime theme stored in public/img/
   - Background automatically changes based on real-time clock:
