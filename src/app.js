@@ -27,6 +27,22 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
+app.get("/detail.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/detail.html"));
+});
+
+app.get("/profile.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/profile.html"));
+});
+
+app.get("/userrecs.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/userrecs.html"));
+});
+
+app.get("/genre.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/genre.html"));
+});
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
   console.log(`📡 Using Jikan API (MyAnimeList) for anime data`);
