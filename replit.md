@@ -1,159 +1,6 @@
 # Overview
 
-Nimeku API is a REST API service that provides anime information and streaming data from Indonesian anime subtitle sources. It integrates with the Jikan API (MyAnimeList) for comprehensive anime schedules, popular titles, search, and detailed metadata, and also scrapes data from samehadaku.mba.
-
-The project includes a web-based frontend featuring real-time anime schedules with auto-updates, search capabilities, and detailed anime information pages with tabbed navigation for characters, episodes, videos, stats, reviews, recommendations, and pictures. The ambition is to provide a comprehensive, user-friendly anime information portal focused on the Indonesian audience.
-
-## Recent Updates (October 5, 2025)
-
-- **Genre Browser with MyAnimeList Data** (v2.12): Real-time genre listing and filtering from MyAnimeList API
-  - Added Genre tab (🎭) in main navigation for browsing anime by genre
-  - Displays 79 genres from Jikan API with real-time anime count per genre (e.g., Action: 5680, Romance: 2201)
-  - Smart genre search with fuzzy matching using Levenshtein distance algorithm
-  - Auto-complete suggestions showing matching genres with anime counts
-  - Genre detail page displays anime with images, synopsis, scores, and member counts from MyAnimeList
-  - Fully responsive grid layout: 2 columns (mobile), 3 columns (tablet 768px+), 4 columns (desktop 1024px+)
-  - Complete dark mode styling for genre cards, search, and suggestions
-  - Pagination support for browsing large genre collections
-  - Backend endpoints: `/api/mal-genres` (list all genres) and `/api/mal-genres/:genreId` (anime by genre)
-  - Mobile-optimized with smooth transitions and hover effects
-
-- **Complete Dark Mode Coverage** (v2.11): Fixed dark mode for all pages with full text visibility
-  - Added dark mode toggle button to profile.html and userrecs.html pages
-  - Comprehensive dark mode styling for all elements in profile and user recommendations pages
-  - Fixed text visibility issues in dark mode across all pages
-  - All text colors now properly contrasted in dark mode (#e0e0e0, #a5b4fc, #9ca3af)
-  - Dark mode preference now persists across all pages via localStorage
-  - Theme toggle functionality integrated into profile.js and userrecs.js
-  - Consistent dark theme color palette across entire application (#2d2d44 cards, #1a1a2e background)
-  - All buttons, cards, and UI elements now fully support dark/light theme toggle
-  - Fixed loading states and error messages to be readable in dark mode
-  - Profile statistics, favorites, and recommendations all properly styled for dark theme
-  - User recommendations page fully styled with dark mode support
-  - Ensured all gradients and shadows work properly in dark mode
-
-- **Mobile UX & Video Player** (v2.10): Enhanced mobile experience and integrated video player
-  - Improved character grid layout for mobile - single column with larger images (70x95px)
-  - Added responsive breakpoints for character display (mobile: 1 col, tablet: 2 cols, desktop: 3+ cols)
-  - Integrated YouTube video player modal - videos play directly in website without redirecting
-  - Video modal with responsive design and smooth animations for all screen sizes
-  - Fixed video modal positioning to display at top with proper centering
-  - Comprehensive dark mode styling for all detail page elements (sidebar, tabs, cards, stats)
-  - All UI elements now properly support dark/light theme toggle
-
-- **UI Improvements & Bug Fixes** (v2.9): Enhanced mobile display and dark mode fixes
-  - Fixed character images in detail page - changed object-fit from cover to contain for proper mobile display
-  - Added dark mode styling for synopsis box (.synopsis-box) to properly support dark theme
-  - Removed anime icon from main header for cleaner, more professional look
-  - Enhanced footer styling with improved spacing, shadows, and hover effects
-  - Improved footer responsiveness and dark mode appearance
-  - Cleaned up unused CSS (anime-icon selectors and keyframe animations)
-
-- **Dark/Light Mode Toggle & Anime Icon** (v2.8): Professional dark mode feature with animated toggle button
-  - Added theme toggle button in top right corner of header with sun/moon icons
-  - Smooth icon transition animations (rotate and scale effects)
-  - Comprehensive dark mode styling for all UI elements (64+ CSS rules)
-  - Dark theme uses modern color palette (#2d2d44 cards, #a5b4fc accents, #1a1a2e background)
-  - Theme preference saved to localStorage and persists across sessions
-  - Replaced emoji 📺 with custom anime SVG icon (64x64px)
-  - Cute anime character design with gradient purple colors matching site theme
-  - Floating animation effect on anime icon for dynamic feel
-  - Fully responsive design for mobile, tablet, and desktop screens
-  - Toggle button positioned absolutely in header for consistent placement
-
-- **Dynamic Time-Based Backgrounds** (v2.7): Beautiful Kimi no Nawa landscape backgrounds that change with real-time
-  - Added 4 stunning landscape images from Kimi no Nawa anime theme stored in public/img/
-  - Background automatically changes based on real-time clock:
-    - 5-11 AM: Morning sunrise landscape (bg-pagi.jpg)
-    - 11 AM-3 PM: Bright afternoon sky (bg-siang.jpg)
-    - 3-6 PM: Beautiful sunset evening (bg-sore.jpg)
-    - 6 PM-5 AM: Peaceful night stars (bg-malam.jpg)
-  - Implemented background-manager.js that updates every 60 seconds
-  - Dark overlay (rgba 0,0,0,0.3) ensures content readability over backgrounds
-  - Applied to all pages: index, detail, profile, and user recommendations
-  - Creates immersive anime atmosphere matching time of day
-
-- **Anime Website Favicon** (v2.6): Professional anime icon for browser tabs
-  - Added favicon.png to all website pages (index, detail, profile, user recommendations)
-  - Icon sourced from Flaticon with anime-themed design
-  - Improves brand identity and makes site recognizable in browser tabs
-  - Properly configured in HTML head sections across all pages
-
-- **User Profile Recommendations Display** (v2.5): Real-time user recommendation history with images
-  - Added new API endpoint `/api/user-profile/:username/recommendations` for scraping MyAnimeList profile recommendations
-  - Displays user's complete recommendation history with anime/manga pairs, images, descriptions, and dates
-  - Card-based layout with side-by-side anime images and description text below
-  - Mobile-responsive design with breakpoints for tablet (768px) and mobile (480px)
-  - Successfully extracts 30 recommendations per page from MyAnimeList profiles
-  - Shows real-time data including recommendation text and submission dates
-  - Integrated into existing profile page with seamless navigation
-  - Note: Scraper relies on MyAnimeList's current HTML structure (typical fragility for scraping-based features)
-
-- **Anime Type Statistics in Schedule** (v2.4.2): Comprehensive breakdown of anime by type
-  - Added real-time statistics display for all anime types: TV, ONA, OVA, Movie, Special
-  - Visual cards with icons showing count for each type in the schedule section
-  - Statistics appear when "Semua" (All) filter is selected on Schedule tab
-  - Responsive grid layout: 2 columns (mobile), 3 columns (tablet), 5 columns (desktop)
-  - Clean, modern design with gradient effects and hover animations
-  - Shows accurate counts including zero values for types not present in current season
-  - All data updates dynamically from MyAnimeList API via Jikan
-  - **Icon Fix**: Fixed MOVIE (🎬) and SPECIAL (⭐) icons by using uppercase type keys consistently
-  - **Accurate Real-Time Totals**: New backend endpoint fetches complete statistics across ALL anime in season (not just current page)
-  - API requests use sequential delays (350ms) to respect Jikan rate limits (3 req/sec)
-  - Statistics cached for 5 minutes to minimize API calls while maintaining real-time accuracy
-  - **Mobile-Optimized Display**: Compact cards with responsive sizing for all screen sizes (480px-1024px+)
-  - **Improved Info Text**: Clean two-line format showing total with bold emphasis and update source
-  - Removed duplicate total display for cleaner UI
-  - Helps users quickly see distribution of anime types for the current season
-
-- **Real-Time Total Counts & Pagination Info** (v2.3): Enhanced data visibility with live statistics
-  - Added total anime count display in Schedule tab with real-time data from MyAnimeList
-  - Displays total count per day (Senin-Minggu) with overall total anime terjadwal
-  - User Recommendations page shows total users count with real-time data
-  - Recommendations tab displays current page number, items per page (100), and next page availability
-  - All counters update dynamically from MyAnimeList API/scraping
-  - Beautiful gradient cards with icons for stats display
-  - Mobile-responsive design for all statistics cards
-
-- **Enhanced Loading Animations & Page Transitions** (v2.2): Modern loading UX improvements
-  - Added smooth page transition overlays with gradient animations to prevent white screen flash
-  - Implemented `navigateWithTransition()` function across all pages for consistent navigation UX
-  - Enhanced loading spinners with gradient shifts and modern bounce animations
-  - Page fade-in effects on load with `page-loaded` class and CSS animations
-  - Improved card hover effects with cubic-bezier easing for better visual feedback
-  - Skeleton loaders with shimmer effect for content loading states
-  - Modal animations with bounce and slide effects
-  - Full-page transition overlay prevents jarring white screens between page navigations
-
-- **User Recommendations & Profile Pages** (v2.0): Complete internal navigation system for browsing top users and their profiles
-  - `/userrecs.html` displays top 50+ users ranked by recommendation count from MyAnimeList
-  - Real-time scraping of user recommendation rankings (e.g., abystoma2 with 1,654 recommendations)
-  - Grid layout with card design showing username and recommendation count
-  - Clickable user cards navigate to internal profile pages
-  - `/profile.html` shows user profiles with anime statistics and favorites
-  - API endpoints: `/api/user-recommendations` (GET list) and `/api/user-profile/:username` (GET profile data)
-  - Beautiful gradient design matching MyAnimeList brand colors (#2E51A2)
-  - Fully integrated navigation - no external redirects to MyAnimeList
-  - Data scraped in real-time using Cheerio for accuracy
-
-- **MyAnimeList Quick Link Button**: Updated to navigate to internal user recommendations page
-  - Button now opens `/userrecs.html` within the app instead of external link
-  - Maintains beautiful blue gradient design matching MyAnimeList brand colors (#2E51A2)
-  - Responsive design with hover effects and mobile optimization
-  - Located at top of Rekomendasi tab for seamless navigation
-
-- **Recommendations Pagination & Image Quality**: Enhanced recommendation viewing experience
-  - Full pagination support with Previous/Next buttons (100 recommendations per page)
-  - Upgraded to high-resolution anime posters (140x200px desktop, 120x170px mobile)
-  - Fixed pagination state - currentPage resets to 1 when switching to Rekomendasi tab
-  - Improved mobile design with larger, crisper images
-
-- **Complete Profile Data & UX Improvements** (v2.1): Enhanced profile pages with complete real-time data
-  - Fixed profile scraper to correctly extract all user information (Last Online, Gender, Birthday, Location, Joined)
-  - Integrated Jikan API v4 for complete anime statistics (Days Watched, Mean Score, Watching, Completed, On-Hold, Dropped, Plan to Watch, Total Entries, Rewatched, Episodes)
-  - Added Interest Stacks to user statistics display alongside Forum Posts, Reviews, Recommendations, Blog Posts, and Clubs
-  - Added loading overlay indicator when navigating from user recommendations to profile for better UX
-  - Mobile-responsive design with optimized layouts for all screen sizes (tablets and phones)
+Nimeku API is a REST API service providing anime information and streaming data from Indonesian anime subtitle sources. It integrates with the Jikan API (MyAnimeList) for comprehensive anime schedules, popular titles, search, and detailed metadata, and also scrapes data from samehadaku.mba. The project includes a web-based frontend featuring real-time anime schedules with auto-updates, search capabilities, and detailed anime information pages with tabbed navigation for characters, episodes, videos, stats, reviews, recommendations, and pictures. The ambition is to provide a comprehensive, user-friendly anime information portal focused on the Indonesian audience. Key capabilities include a genre browser, full dark mode coverage, enhanced mobile UX with an integrated video player, dynamic time-based backgrounds, and detailed user profile and recommendation displays.
 
 # User Preferences
 
@@ -165,16 +12,19 @@ Preferred communication style: Simple, everyday language.
 
 **Technology Stack**: Vanilla JavaScript, HTML5, CSS3
 
-**Design Pattern**: Multi-page application (MPA) with `index.html` for main navigation, `detail.html` for comprehensive anime details, `userrecs.html` for user recommendations, and `profile.html` for user profiles. Client-side routing uses URL parameters. Real-time updates are handled via JavaScript `fetch` API with 5-minute auto-refresh intervals. Error handling is robust for API rate limits and server errors.
+**Design Pattern**: Multi-page application (MPA) with `index.html` for main navigation, `detail.html` for comprehensive anime details, `userrecs.html` for user recommendations, and `profile.html` for user profiles. Client-side routing uses URL parameters. Real-time updates are handled via JavaScript `fetch` API with 5-minute auto-refresh intervals.
 
 **UI/UX Decisions**:
 - Tabbed navigation for main sections and detail pages.
 - Responsive design for mobile, tablet, and desktop.
-- Skeleton loaders and smooth fade-in transitions for images and content.
-- Color-coded elements (e.g., daily schedule colors, type badges with gradient colors).
-- Real-time "LIVE" indicators for currently airing anime.
-- Pagination for navigation through lists and recommendations.
-- Image modal viewer for detailed picture viewing.
+- Skeleton loaders and smooth fade-in transitions.
+- Color-coded elements and real-time "LIVE" indicators.
+- Pagination for navigation.
+- Image modal viewer.
+- Integrated YouTube video player modal.
+- Dynamic time-based background images.
+- Comprehensive dark mode styling with a persistent toggle.
+- Genre browser with fuzzy search and auto-complete.
 
 ## Backend Architecture
 
@@ -183,9 +33,9 @@ Preferred communication style: Simple, everyday language.
 **Architecture Pattern**: RESTful API with controller-based routing.
 
 **Core Components**:
-- **API Routes**: `jikanRoutes.js` for Jikan API integration, MyAnimeList scraping endpoints (user recommendations, user profiles), and `apiRoutes.js` for web scraping (currently a backup).
-- **Controllers**: `jikanController.js` for transforming Jikan API responses to Indonesian and scraping MyAnimeList user data, and `scrapingController.js` for web scraping logic (legacy/backup).
-- **Utilities**: `fetchPage.js` for HTTP requests with rate limiting, and `helper.js` for HTML parsing.
+- **API Routes**: Jikan API integration, MyAnimeList scraping endpoints (user recommendations, user profiles), and web scraping (fallback).
+- **Controllers**: Transform Jikan API responses and handle MyAnimeList user data scraping, and web scraping logic.
+- **Utilities**: HTTP requests with rate limiting, and HTML parsing.
 
 **Data Flow**: Frontend requests `/api/*` endpoints, Express routes to the controller, data is fetched from Jikan API, transformed (e.g., localized), and sent as a JSON response to the frontend.
 
