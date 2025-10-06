@@ -3320,15 +3320,15 @@ body.dark-mode .mobile-nav-item.active {
 
 @media (max-width: 768px) {
     .mobile-bottom-nav {
-        display: block;
+        display: none;
     }
     
     .scroll-to-top.show {
-        bottom: 80px;
+        bottom: 20px;
     }
     
     .container {
-        padding-bottom: 70px;
+        padding-bottom: 20px;
     }
 }
 
@@ -3336,7 +3336,7 @@ body.dark-mode .mobile-nav-item.active {
 .mobile-fab {
     display: none;
     position: fixed;
-    bottom: 85px;
+    bottom: 20px;
     right: 20px;
     width: 56px;
     height: 56px;
