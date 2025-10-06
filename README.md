@@ -1,6 +1,6 @@
 <div align="center">
 
-![Web Info Anime Banner](https://raw.githubusercontent.com/hitlabmodv2/WEB_INFO_ANIME/MD/public/img/banner.png)
+<img src="public/img/banner.png" alt="Web Info Anime Banner" width="100%">
 
 # 🎌 Web Info Anime - API & Portal Informasi Anime 🎌
 
@@ -936,7 +936,7 @@ git push origin fitur-keren-anda
 
 <div align="center">
 
-![Coded By Developer](https://raw.githubusercontent.com/hitlabmodv2/WEB_INFO_ANIME/MD/public/img/coded-by.png)
+<img src="public/img/coded-by.png" alt="Coded By Developer" width="600">
 
 ### 👨‍💻 Coded by Developer
 
