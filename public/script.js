@@ -1605,11 +1605,6 @@ function startAutoUpdate() {
         clearInterval(autoUpdateInterval);
     }
     
-    autoUpdateInterval = setInterval(() => {
-        if (currentTab !== 'search') {
-            loadCurrentTab();
-        }
-    }, 5 * 60 * 1000);
 }
 
 async function getUserTimezone() {
@@ -1814,7 +1809,6 @@ function initSwipeGesture() {
 
 // Initialize mobile features
 if (window.innerWidth <= 768) {
-    initPullToRefresh();
     initSwipeGesture();
 }
 
