@@ -1675,6 +1675,149 @@ async function initializePoweredBy() {
     }, 1000);
 }
 
+// Mobile Features
+function switchToTab(tabName) {
+    const tabBtns = document.querySelectorAll('.drawer-content .tab-btn');
+    tabBtns.forEach(btn => {
+        if (btn.getAttribute('data-tab') === tabName) {
+            btn.click();
+        }
+    });
+    
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    mobileNavItems.forEach(item => {
+        if (item.getAttribute('data-tab') === tabName) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+    
+    scrollToTop();
+}
+
+function toggleQuickActions() {
+    const menu = document.getElementById('quickActionMenu');
+    const fab = document.getElementById('mobileFab');
+    
+    if (menu.classList.contains('show')) {
+        menu.classList.remove('show');
+        fab.textContent = '+';
+        fab.style.transform = 'rotate(0deg)';
+    } else {
+        menu.classList.add('show');
+        fab.textContent = '×';
+        fab.style.transform = 'rotate(45deg)';
+    }
+}
+
+// Pull to Refresh
+let pullStartY = 0;
+let pullMoveY = 0;
+let isPulling = false;
+
+function initPullToRefresh() {
+    const pullIndicator = document.getElementById('pullToRefresh');
+    
+    document.addEventListener('touchstart', (e) => {
+        if (window.pageYOffset === 0) {
+            pullStartY = e.touches[0].clientY;
+            isPulling = true;
+        }
+    });
+    
+    document.addEventListener('touchmove', (e) => {
+        if (!isPulling) return;
+        
+        pullMoveY = e.touches[0].clientY;
+        const pullDistance = pullMoveY - pullStartY;
+        
+        if (pullDistance > 80 && window.pageYOffset === 0) {
+            pullIndicator.classList.add('show');
+        }
+    });
+    
+    document.addEventListener('touchend', async () => {
+        if (!isPulling) return;
+        
+        const pullDistance = pullMoveY - pullStartY;
+        
+        if (pullDistance > 80 && window.pageYOffset === 0) {
+            await loadCurrentTab();
+            setTimeout(() => {
+                pullIndicator.classList.remove('show');
+            }, 1000);
+        } else {
+            pullIndicator.classList.remove('show');
+        }
+        
+        isPulling = false;
+        pullStartY = 0;
+        pullMoveY = 0;
+    });
+}
+
+// Swipe Gesture
+let touchStartX = 0;
+let touchEndX = 0;
+
+function initSwipeGesture() {
+    const swipeLeft = document.getElementById('swipeLeft');
+    const swipeRight = document.getElementById('swipeRight');
+    
+    const tabs = ['schedule', 'airing', 'new', 'popular', 'season', 'recommendations', 'genres', 'search'];
+    
+    document.addEventListener('touchstart', (e) => {
+        touchStartX = e.touches[0].clientX;
+    });
+    
+    document.addEventListener('touchmove', (e) => {
+        const touchMoveX = e.touches[0].clientX;
+        const diff = touchMoveX - touchStartX;
+        
+        if (diff > 50) {
+            swipeRight.classList.add('show');
+            swipeLeft.classList.remove('show');
+        } else if (diff < -50) {
+            swipeLeft.classList.add('show');
+            swipeRight.classList.remove('show');
+        } else {
+            swipeLeft.classList.remove('show');
+            swipeRight.classList.remove('show');
+        }
+    });
+    
+    document.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].clientX;
+        handleSwipe();
+        
+        setTimeout(() => {
+            swipeLeft.classList.remove('show');
+            swipeRight.classList.remove('show');
+        }, 300);
+    });
+    
+    function handleSwipe() {
+        const swipeDistance = touchEndX - touchStartX;
+        const currentIndex = tabs.indexOf(currentTab);
+        
+        if (swipeDistance > 100 && currentIndex > 0) {
+            switchToTab(tabs[currentIndex - 1]);
+        } else if (swipeDistance < -100 && currentIndex < tabs.length - 1) {
+            switchToTab(tabs[currentIndex + 1]);
+        }
+        
+        touchStartX = 0;
+        touchEndX = 0;
+    }
+}
+
+// Initialize mobile features
+if (window.innerWidth <= 768) {
+    initPullToRefresh();
+    initSwipeGesture();
+}
+
 if (document.getElementById('content')) {
     loadTab('schedule');
     startAutoUpdate();
