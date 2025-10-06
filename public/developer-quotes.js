@@ -77,8 +77,59 @@ function displayRandomQuote() {
     }
 }
 
+// Counter Animation
+function animateCounter(element, target, duration = 2000) {
+    let start = 0;
+    const increment = target / (duration / 16);
+    
+    function updateCounter() {
+        start += increment;
+        if (start < target) {
+            element.textContent = Math.floor(start).toLocaleString();
+            requestAnimationFrame(updateCounter);
+        } else {
+            element.textContent = target.toLocaleString();
+        }
+    }
+    
+    updateCounter();
+}
+
+// Initialize counters when page loads
+function initCounters() {
+    const coffeeElement = document.getElementById('coffeeCount');
+    const codeLinesElement = document.getElementById('codeLines');
+    const animeElement = document.getElementById('animeWatched');
+    const bugElement = document.getElementById('bugFixed');
+    
+    if (coffeeElement) animateCounter(coffeeElement, 2847, 2000);
+    if (codeLinesElement) animateCounter(codeLinesElement, 15420, 2500);
+    if (animeElement) animateCounter(animeElement, 327, 2000);
+    if (bugElement) animateCounter(bugElement, 1092, 2200);
+}
+
+// Spoiler Button Toggle
+function initSpoiler() {
+    const spoilerBtn = document.getElementById('spoilerBtn');
+    const spoilerContent = document.getElementById('spoilerContent');
+    
+    if (spoilerBtn && spoilerContent) {
+        spoilerBtn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            spoilerContent.classList.toggle('show');
+        });
+    }
+}
+
+// Initialize all features
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', displayRandomQuote);
+    document.addEventListener('DOMContentLoaded', function() {
+        displayRandomQuote();
+        setTimeout(initCounters, 300);
+        initSpoiler();
+    });
 } else {
     displayRandomQuote();
+    setTimeout(initCounters, 300);
+    initSpoiler();
 }
