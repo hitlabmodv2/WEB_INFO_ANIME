@@ -140,102 +140,10 @@ function initDrawerMenu() {
     });
 }
 
-let serverInfoInterval = null;
-
-function initServerInfo() {
-    const serverInfoBtn = document.getElementById('serverInfoBtn');
-    const serverInfoModal = document.getElementById('serverInfoModal');
-    const closeServerInfo = document.getElementById('closeServerInfo');
-    
-    function openServerInfo() {
-        serverInfoModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-        fetchServerStats();
-        serverInfoInterval = setInterval(fetchServerStats, 3000);
-    }
-    
-    function closeServerInfoModal() {
-        serverInfoModal.classList.remove('active');
-        document.body.style.overflow = '';
-        if (serverInfoInterval) {
-            clearInterval(serverInfoInterval);
-            serverInfoInterval = null;
-        }
-    }
-    
-    if (serverInfoBtn) {
-        serverInfoBtn.addEventListener('click', () => {
-            const drawerMenu = document.getElementById('drawerMenu');
-            const menuOverlay = document.getElementById('menuOverlay');
-            const menuToggle = document.getElementById('menuToggle');
-            
-            drawerMenu.classList.remove('active');
-            menuOverlay.classList.remove('active');
-            menuToggle.classList.remove('active');
-            document.body.style.overflow = '';
-            
-            setTimeout(() => {
-                openServerInfo();
-            }, 300);
-        });
-    }
-    
-    if (closeServerInfo) {
-        closeServerInfo.addEventListener('click', closeServerInfoModal);
-    }
-    
-    if (serverInfoModal) {
-        serverInfoModal.addEventListener('click', (e) => {
-            if (e.target === serverInfoModal) {
-                closeServerInfoModal();
-            }
-        });
-    }
-}
-
-async function fetchServerStats() {
-    try {
-        const response = await fetch(`${API_BASE}/server-stats`);
-        const result = await response.json();
-        
-        if (result.success && result.data) {
-            const data = result.data;
-            
-            document.getElementById('totalRam').textContent = data.memory.total;
-            document.getElementById('usedRam').textContent = data.memory.used;
-            document.getElementById('freeRam').textContent = data.memory.free;
-            document.getElementById('ramPercentage').textContent = data.memory.usagePercent.toFixed(2) + '%';
-            
-            const progressBar = document.getElementById('ramProgressBar');
-            progressBar.style.width = data.memory.usagePercent + '%';
-            
-            progressBar.classList.remove('low', 'medium', 'high');
-            
-            if (data.memory.usagePercent > 80) {
-                progressBar.classList.add('high');
-                document.getElementById('ramPercentage').style.color = '#e74c3c';
-            } else if (data.memory.usagePercent > 60) {
-                progressBar.classList.add('medium');
-                document.getElementById('ramPercentage').style.color = '#f39c12';
-            } else {
-                progressBar.classList.add('low');
-                document.getElementById('ramPercentage').style.color = '#27ae60';
-            }
-            
-            document.getElementById('cpuInfo').textContent = `${data.cpu.cores} Core - ${data.cpu.model}`;
-            document.getElementById('uptime').textContent = data.uptime;
-            document.getElementById('platform').textContent = data.platform;
-        }
-    } catch (error) {
-        console.error('Error fetching server stats:', error);
-    }
-}
-
 document.addEventListener('DOMContentLoaded', () => {
     initThemeToggle();
     initScrollToTop();
     initDrawerMenu();
-    initServerInfo();
     
     setTimeout(() => {
         hidePageTransition();
