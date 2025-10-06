@@ -353,6 +353,10 @@ body.dark-mode .profile-description p {
     color: #b0b0b0;
 }
 
+body.dark-mode .profile-description p::after {
+    color: #a5b4fc;
+}
+
 body.dark-mode .contact-section h3,
 body.dark-mode .tech-stack-section h3,
 body.dark-mode .features-section h3 {

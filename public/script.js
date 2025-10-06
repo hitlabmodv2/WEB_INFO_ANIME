@@ -209,14 +209,16 @@ async function fetchServerStats() {
             const progressBar = document.getElementById('ramProgressBar');
             progressBar.style.width = data.memory.usagePercent + '%';
             
+            progressBar.classList.remove('low', 'medium', 'high');
+            
             if (data.memory.usagePercent > 80) {
-                progressBar.style.background = 'linear-gradient(90deg, #e74c3c, #c0392b)';
+                progressBar.classList.add('high');
                 document.getElementById('ramPercentage').style.color = '#e74c3c';
             } else if (data.memory.usagePercent > 60) {
-                progressBar.style.background = 'linear-gradient(90deg, #f39c12, #e67e22)';
+                progressBar.classList.add('medium');
                 document.getElementById('ramPercentage').style.color = '#f39c12';
             } else {
-                progressBar.style.background = 'linear-gradient(90deg, #2ecc71, #27ae60)';
+                progressBar.classList.add('low');
                 document.getElementById('ramPercentage').style.color = '#27ae60';
             }
             
