@@ -1691,20 +1691,6 @@ function switchToTab(tabName) {
     scrollToTop();
 }
 
-function toggleQuickActions() {
-    const menu = document.getElementById('quickActionMenu');
-    const fab = document.getElementById('mobileFab');
-    
-    if (menu.classList.contains('show')) {
-        menu.classList.remove('show');
-        fab.textContent = '+';
-        fab.style.transform = 'rotate(0deg)';
-    } else {
-        menu.classList.add('show');
-        fab.textContent = '×';
-        fab.style.transform = 'rotate(45deg)';
-    }
-}
 
 // Pull to Refresh
 let pullStartY = 0;
