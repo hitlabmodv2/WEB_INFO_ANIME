@@ -10,6 +10,36 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <button id="menuToggle" class="menu-toggle" aria-label="Toggle Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div id="menuOverlay" class="menu-overlay"></div>
+
+    <nav id="drawerMenu" class="drawer-menu">
+        <div class="drawer-header">
+            <h3>Menu</h3>
+            <button id="closeDrawer" class="close-drawer" aria-label="Close Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="drawer-content">
+            <button class="tab-btn active" data-tab="schedule">📅 Jadwal</button>
+            <button class="tab-btn" data-tab="airing">📺 Sedang Tayang</button>
+            <button class="tab-btn" data-tab="new">🆕 Terbaru</button>
+            <button class="tab-btn" data-tab="popular">🔥 Populer</button>
+            <button class="tab-btn" data-tab="season">🌸 Musim</button>
+            <button class="tab-btn" data-tab="recommendations">💡 Rekomendasi</button>
+            <button class="tab-btn" data-tab="genres">🎭 Genre</button>
+            <button class="tab-btn" data-tab="search">🔍 Cari</button>
+        </div>
+    </nav>
+
     <div class="container">
         <header>
             <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
@@ -40,17 +70,6 @@
         </header>
 
         <div id="notification" class="notification"></div>
-
-        <nav class="tabs">
-            <button class="tab-btn active" data-tab="schedule">📅 Jadwal</button>
-            <button class="tab-btn" data-tab="airing">📺 Sedang Tayang</button>
-            <button class="tab-btn" data-tab="new">🆕 Terbaru</button>
-            <button class="tab-btn" data-tab="popular">🔥 Populer</button>
-            <button class="tab-btn" data-tab="season">🌸 Musim</button>
-            <button class="tab-btn" data-tab="recommendations">💡 Rekomendasi</button>
-            <button class="tab-btn" data-tab="genres">🎭 Genre</button>
-            <button class="tab-btn" data-tab="search">🔍 Cari</button>
-        </nav>
 
         <div id="searchSection" class="search-section" style="display: none;">
             <input type="text" id="searchInput" placeholder="Cari anime...">

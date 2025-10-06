@@ -71,9 +71,58 @@ function scrollToTop() {
     });
 }
 
+function initDrawerMenu() {
+    const menuToggle = document.getElementById('menuToggle');
+    const drawerMenu = document.getElementById('drawerMenu');
+    const menuOverlay = document.getElementById('menuOverlay');
+    const closeDrawer = document.getElementById('closeDrawer');
+    
+    function openDrawer() {
+        drawerMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        menuToggle.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeDrawerFunc() {
+        drawerMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        menuToggle.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    
+    if (menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            if (drawerMenu.classList.contains('active')) {
+                closeDrawerFunc();
+            } else {
+                openDrawer();
+            }
+        });
+    }
+    
+    if (closeDrawer) {
+        closeDrawer.addEventListener('click', closeDrawerFunc);
+    }
+    
+    if (menuOverlay) {
+        menuOverlay.addEventListener('click', closeDrawerFunc);
+    }
+    
+    const drawerTabButtons = drawerMenu.querySelectorAll('.tab-btn');
+    drawerTabButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            loadTab(tab);
+            closeDrawerFunc();
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     initThemeToggle();
     initScrollToTop();
+    initDrawerMenu();
     
     setTimeout(() => {
         hidePageTransition();
