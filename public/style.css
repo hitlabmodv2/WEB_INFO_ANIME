@@ -97,42 +97,56 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
-    border-bottom: 2px solid #f0f0f0;
+    padding: 16px 18px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 60px;
 }
 
 .drawer-header h3 {
     margin: 0;
     color: white;
-    font-size: 1.3em;
+    font-size: 1.1em;
     font-weight: 700;
+    letter-spacing: 0.5px;
+    flex-grow: 1;
 }
 
 .close-drawer {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.15);
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
+    border-radius: 8px;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
 }
 
 .close-drawer svg {
     stroke: white;
+    width: 20px;
+    height: 20px;
 }
 
 .close-drawer:hover {
+    background: rgba(255, 255, 255, 0.25);
     transform: rotate(90deg);
 }
 
+.close-drawer:active {
+    transform: rotate(90deg) scale(0.95);
+}
+
 .drawer-content {
-    padding: 15px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 body::before {
@@ -3105,4 +3119,77 @@ body.dark-mode .scroll-to-top {
 body.dark-mode .scroll-to-top:hover {
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.7);
+}
+
+@media (max-width: 480px) {
+    .drawer-menu {
+        width: 260px;
+        left: -260px;
+    }
+    
+    .drawer-header {
+        padding: 14px 16px;
+        min-height: 56px;
+    }
+    
+    .drawer-header h3 {
+        font-size: 1em;
+        letter-spacing: 0.3px;
+    }
+    
+    .close-drawer {
+        width: 36px;
+        height: 36px;
+        padding: 6px;
+    }
+    
+    .close-drawer svg {
+        width: 18px;
+        height: 18px;
+    }
+    
+    .drawer-content {
+        padding: 10px;
+        gap: 7px;
+    }
+    
+    .drawer-content .tab-btn {
+        padding: 13px 16px;
+        font-size: 0.9em;
+    }
+    
+    .menu-toggle {
+        width: 42px;
+        height: 42px;
+        top: 18px;
+        left: 18px;
+    }
+    
+    .menu-toggle span {
+        width: 22px;
+        height: 2.5px;
+    }
+}
+
+body.dark-mode .drawer-menu {
+    background: #1f1f2e;
+}
+
+body.dark-mode .drawer-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .drawer-content .tab-btn {
+    background: #2d2d44;
+    color: #a5b4fc;
+}
+
+body.dark-mode .drawer-content .tab-btn:hover {
+    background: #3d3d5c;
+    border-left-color: #a5b4fc;
+}
+
+body.dark-mode .drawer-content .tab-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
