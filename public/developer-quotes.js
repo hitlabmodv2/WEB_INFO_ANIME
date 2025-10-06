@@ -16,15 +16,64 @@ const developerQuotes = [
     "Kreator aplikasi web yang passionate dalam dunia anime. Expertise dalam menciptakan solusi tracking yang powerful dan elegan."
 ];
 
+let currentQuoteIndex = 0;
+let charIndex = 0;
+let isDeleting = false;
+let typingSpeed = 50;
+let deletingSpeed = 30;
+let pauseAfterComplete = 3000;
+let pauseBeforeDelete = 17000;
+
 function getRandomQuote() {
     const randomIndex = Math.floor(Math.random() * developerQuotes.length);
     return developerQuotes[randomIndex];
 }
 
+function typeWriter() {
+    const quoteElement = document.querySelector('.profile-description p');
+    if (!quoteElement) return;
+
+    const currentQuote = developerQuotes[currentQuoteIndex];
+    
+    if (isDeleting) {
+        quoteElement.textContent = currentQuote.substring(0, charIndex - 1);
+        charIndex--;
+        
+        if (charIndex === 0) {
+            isDeleting = false;
+            currentQuoteIndex = (currentQuoteIndex + 1) % developerQuotes.length;
+            setTimeout(typeWriter, 500);
+            return;
+        }
+        
+        setTimeout(typeWriter, deletingSpeed);
+    } else {
+        quoteElement.textContent = currentQuote.substring(0, charIndex + 1);
+        charIndex++;
+        
+        if (charIndex === currentQuote.length) {
+            setTimeout(() => {
+                isDeleting = true;
+                typeWriter();
+            }, pauseBeforeDelete);
+            return;
+        }
+        
+        setTimeout(typeWriter, typingSpeed);
+    }
+}
+
 function displayRandomQuote() {
     const quoteElement = document.querySelector('.profile-description p');
     if (quoteElement) {
-        quoteElement.textContent = getRandomQuote();
+        currentQuoteIndex = Math.floor(Math.random() * developerQuotes.length);
+        charIndex = 0;
+        isDeleting = false;
+        quoteElement.textContent = '';
+        
+        setTimeout(() => {
+            typeWriter();
+        }, 500);
     }
 }
 

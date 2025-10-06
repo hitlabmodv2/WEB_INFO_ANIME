@@ -93,6 +93,25 @@
     color: #555;
     line-height: 1.8;
     margin: 0;
+    min-height: 60px;
+    position: relative;
+}
+
+.profile-description p::after {
+    content: '|';
+    color: #667eea;
+    font-weight: bold;
+    animation: blink 0.7s infinite;
+    margin-left: 2px;
+}
+
+@keyframes blink {
+    0%, 50% {
+        opacity: 1;
+    }
+    51%, 100% {
+        opacity: 0;
+    }
 }
 
 .contact-section {
