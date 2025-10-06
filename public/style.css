@@ -910,106 +910,46 @@ footer p {
 }
 
 .powered-by {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
-    backdrop-filter: blur(15px);
-    border-radius: 20px;
-    padding: 20px 15px;
-    margin: 20px 10px 25px;
+    background: rgba(102, 126, 234, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 8px 10px;
+    margin: 15px auto 10px;
     text-align: center;
-    max-width: calc(100% - 20px);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.4), 0 4px 10px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-.powered-by::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-    transform: rotate(45deg);
-    animation: shine 3s infinite;
-}
-
-@keyframes shine {
-    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
-}
-
-.powered-by:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5), 0 6px 15px rgba(0, 0, 0, 0.3);
+    max-width: 100%;
+    border-top: 1px solid rgba(102, 126, 234, 0.2);
 }
 
 .powered-by .greeting {
-    color: #fff;
-    font-size: 1.1em;
-    font-weight: 700;
-    margin: 8px 0;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    letter-spacing: 0.5px;
-    position: relative;
-    z-index: 1;
+    color: #666;
+    font-size: 0.7em;
+    font-weight: 500;
+    margin: 3px 0;
 }
 
 .powered-by .datetime {
-    color: #ffffff;
-    font-size: 0.85em;
-    margin: 10px 0;
+    color: #666;
+    font-size: 0.65em;
+    margin: 3px 0;
     font-family: 'Segoe UI', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 8px 15px;
-    border-radius: 10px;
-    display: inline-block;
-    position: relative;
-    z-index: 1;
-    backdrop-filter: blur(5px);
+    font-weight: 400;
 }
 
 .powered-by .credit {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 0.8em;
-    margin: 8px 0 0;
-    font-weight: 600;
-    position: relative;
-    z-index: 1;
+    color: #666;
+    font-size: 0.65em;
+    margin: 3px 0;
+    font-weight: 400;
 }
 
 .powered-by .creator {
-    color: #ffd700;
-    font-weight: 800;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
-    letter-spacing: 0.8px;
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #667eea;
+    font-weight: 600;
 }
 
 @media (min-width: 480px) {
     .powered-by {
-        padding: 16px 20px;
-        margin: 20px auto 25px;
-        max-width: 400px;
-    }
-    
-    .powered-by .greeting {
-        font-size: 0.85em;
-    }
-    
-    .powered-by .datetime {
-        font-size: 0.75em;
-    }
-    
-    .powered-by .credit {
-        font-size: 0.7em;
+        padding: 8px 10px;
+        margin: 15px auto 10px;
     }
 }
 
@@ -2915,26 +2855,18 @@ body.dark-mode .modal-description {
 }
 
 body.dark-mode .powered-by {
-    background: linear-gradient(135deg, rgba(45, 45, 68, 0.95) 0%, rgba(31, 31, 46, 0.95) 100%);
-    border: 2px solid rgba(165, 180, 252, 0.3);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 4px 10px rgba(0, 0, 0, 0.3);
+    background: rgba(45, 45, 68, 0.3);
+    border-top: 1px solid rgba(165, 180, 252, 0.2);
 }
 
-body.dark-mode .powered-by:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4), 0 6px 15px rgba(0, 0, 0, 0.5);
-}
-
-body.dark-mode .powered-by .datetime {
-    background: rgba(102, 126, 234, 0.2);
-    color: #e0e0e0;
+body.dark-mode .powered-by .greeting,
+body.dark-mode .powered-by .datetime,
+body.dark-mode .powered-by .credit {
+    color: #9ca3af;
 }
 
 body.dark-mode .powered-by .creator {
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #a5b4fc;
 }
 
 body.dark-mode .pagination-btn {
