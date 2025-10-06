@@ -33,19 +33,36 @@ function navigateWithTransition(url) {
     }, 400);
 }
 
+function getJakartaHour() {
+    const now = new Date();
+    const jakartaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
+    return jakartaTime.getHours();
+}
+
+function shouldBeDarkMode() {
+    const hour = getJakartaHour();
+    return hour >= 15 || hour < 5;
+}
+
+function applyAutoTheme() {
+    const shouldDark = shouldBeDarkMode();
+    const isDark = document.body.classList.contains('dark-mode');
+    
+    if (shouldDark && !isDark) {
+        document.body.classList.add('dark-mode');
+    } else if (!shouldDark && isDark) {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
 function initThemeToggle() {
     const themeToggle = document.getElementById('themeToggle');
-    const savedTheme = localStorage.getItem('theme') || 'light';
     
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-mode');
-    }
+    applyAutoTheme();
     
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
-            const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
             
             themeToggle.style.transform = 'scale(0.8) rotate(180deg)';
             setTimeout(() => {
@@ -53,6 +70,10 @@ function initThemeToggle() {
             }, 200);
         });
     }
+    
+    setInterval(() => {
+        applyAutoTheme();
+    }, 60000);
 }
 
 function initScrollToTop() {
