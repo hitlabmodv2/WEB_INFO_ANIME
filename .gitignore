@@ -3,6 +3,9 @@ node_modules/
 api/
 .vercel
 
+# Attached assets (temporary files)
+attached_assets/
+
 # Logs
 logs
 *.log
