@@ -25,6 +25,13 @@ Preferred communication style: Simple, everyday language.
 - Dynamic time-based background system with 40 Kimi no Nawa anime scenes (10 per time period: pagi/siang/sore/malam) that rotate every minute based on Asia/Jakarta timezone.
 - Comprehensive dark mode styling with a persistent toggle.
 - Genre browser with fuzzy search and auto-complete.
+- Mobile-optimized UX (max-width: 768px):
+  - Bottom Navigation Bar with quick access to main sections (Jadwal, Tayang, Cari, Genre).
+  - Floating Action Button (FAB) with quick actions menu for Rekomendasi, Musim, and Populer.
+  - Pull-to-Refresh gesture support for data updates.
+  - Swipe gestures for tab navigation with visual indicators.
+  - Touch-optimized targets (minimum 44px) for all interactive elements.
+  - Proper z-index layering: pull-to-refresh/swipe (10000), scroll-to-top (9999), bottom nav (9998), FAB (9997), quick actions (9996).
 
 ## Backend Architecture
 
