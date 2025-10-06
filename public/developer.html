@@ -8,6 +8,26 @@
     <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="developer.css">
+    <script>
+        function navigateWithTransition(url) {
+            const transition = document.getElementById('pageTransition');
+            if (transition) {
+                transition.style.display = 'flex';
+                setTimeout(() => {
+                    window.location.href = url;
+                }, 300);
+            } else {
+                window.location.href = url;
+            }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 </head>
 <body>
     <button id="menuToggle" class="menu-toggle" aria-label="Toggle Menu">
@@ -79,10 +99,7 @@
             <div class="developer-profile">
                 <div class="profile-card">
                     <div class="profile-avatar">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                        </svg>
+                        <img src="avatar-icon.png" alt="Bang Wily Avatar" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
                     </div>
                     <h2 class="profile-name">Bang Wily</h2>
                     <p class="profile-title">Full Stack Developer & Anime Enthusiast</p>
@@ -254,8 +271,31 @@
     </button>
 
     <script src="background-manager.js"></script>
-    <script src="script.js"></script>
+    <script src="developer-quotes.js"></script>
     <script>
+        window.addEventListener('scroll', () => {
+            const scrollBtn = document.getElementById('scrollToTop');
+            if (scrollBtn) {
+                if (window.pageYOffset > 300) {
+                    scrollBtn.style.display = 'flex';
+                } else {
+                    scrollBtn.style.display = 'none';
+                }
+            }
+        });
+
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+            });
+
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        }
+
         function initDrawerMenu() {
             const menuToggle = document.getElementById('menuToggle');
             const drawerMenu = document.getElementById('drawerMenu');
@@ -263,22 +303,22 @@
             const closeDrawer = document.getElementById('closeDrawer');
             
             function openDrawer() {
-                drawerMenu.classList.add('active');
-                menuOverlay.classList.add('active');
-                menuToggle.classList.add('active');
+                if (drawerMenu) drawerMenu.classList.add('active');
+                if (menuOverlay) menuOverlay.classList.add('active');
+                if (menuToggle) menuToggle.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
             
             function closeDrawerFunc() {
-                drawerMenu.classList.remove('active');
-                menuOverlay.classList.remove('active');
-                menuToggle.classList.remove('active');
+                if (drawerMenu) drawerMenu.classList.remove('active');
+                if (menuOverlay) menuOverlay.classList.remove('active');
+                if (menuToggle) menuToggle.classList.remove('active');
                 document.body.style.overflow = '';
             }
             
             if (menuToggle) {
                 menuToggle.addEventListener('click', () => {
-                    if (drawerMenu.classList.contains('active')) {
+                    if (drawerMenu && drawerMenu.classList.contains('active')) {
                         closeDrawerFunc();
                     } else {
                         openDrawer();

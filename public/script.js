@@ -1500,24 +1500,29 @@ function loadTab(tab) {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+    
+    const activeTabBtn = document.querySelector(`[data-tab="${tab}"]`);
+    if (activeTabBtn) {
+        activeTabBtn.classList.add('active');
+    }
     
     const searchSection = document.getElementById('searchSection');
     const seasonSection = document.getElementById('seasonSection');
     const genreSection = document.getElementById('genreSection');
     const typeFiltersMini = document.getElementById('typeFiltersMini');
     
-    searchSection.style.display = tab === 'search' ? 'flex' : 'none';
-    seasonSection.style.display = tab === 'season' ? 'block' : 'none';
-    genreSection.style.display = tab === 'genres' ? 'block' : 'none';
+    if (searchSection) searchSection.style.display = tab === 'search' ? 'flex' : 'none';
+    if (seasonSection) seasonSection.style.display = tab === 'season' ? 'block' : 'none';
+    if (genreSection) genreSection.style.display = tab === 'genres' ? 'block' : 'none';
     
     if (tab === 'schedule' || tab === 'airing' || tab === 'new' || tab === 'popular' || tab === 'season') {
-        typeFiltersMini.style.display = 'flex';
+        if (typeFiltersMini) typeFiltersMini.style.display = 'flex';
         document.querySelectorAll('.type-mini-btn').forEach(b => b.classList.remove('active'));
-        document.querySelector('.type-mini-btn[data-type=""]').classList.add('active');
+        const defaultTypeBtn = document.querySelector('.type-mini-btn[data-type=""]');
+        if (defaultTypeBtn) defaultTypeBtn.classList.add('active');
         setupTypeFilters();
     } else {
-        typeFiltersMini.style.display = 'none';
+        if (typeFiltersMini) typeFiltersMini.style.display = 'none';
     }
     
     showLoading();
@@ -1565,22 +1570,35 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     });
 });
 
-document.getElementById('searchBtn').addEventListener('click', () => {
-    const keyword = document.getElementById('searchInput').value.trim();
-    if (keyword) {
-        showLoading();
-        searchAnime(keyword).then(() => hideLoading());
-    }
-});
+const searchBtn = document.getElementById('searchBtn');
+if (searchBtn) {
+    searchBtn.addEventListener('click', () => {
+        const keyword = document.getElementById('searchInput').value.trim();
+        if (keyword) {
+            showLoading();
+            searchAnime(keyword).then(() => hideLoading());
+        }
+    });
+}
 
-document.getElementById('searchInput').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        document.getElementById('searchBtn').click();
-    }
-});
+const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            document.getElementById('searchBtn').click();
+        }
+    });
+}
 
-document.getElementById('prevPageBtn').addEventListener('click', () => goToPage('prev'));
-document.getElementById('nextPageBtn').addEventListener('click', () => goToPage('next'));
+const prevPageBtn = document.getElementById('prevPageBtn');
+if (prevPageBtn) {
+    prevPageBtn.addEventListener('click', () => goToPage('prev'));
+}
+
+const nextPageBtn = document.getElementById('nextPageBtn');
+if (nextPageBtn) {
+    nextPageBtn.addEventListener('click', () => goToPage('next'));
+}
 
 function startAutoUpdate() {
     if (autoUpdateInterval) {
@@ -1657,6 +1675,8 @@ async function initializePoweredBy() {
     }, 1000);
 }
 
-loadTab('schedule');
-startAutoUpdate();
+if (document.getElementById('content')) {
+    loadTab('schedule');
+    startAutoUpdate();
+}
 initializePoweredBy();
