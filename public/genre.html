@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genre Anime | NimeKu</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            <div class="header-content">
+                <a href="index.html" class="back-btn" onclick="navigateToHome(event)">← Kembali</a>
+                <div class="header-title-wrapper">
+                    <h1 id="genreTitle">Loading...</h1>
+                </div>
+            </div>
+        </header>
+
+        <div id="notification" class="notification"></div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p id="loadingText">Memuat anime...</p>
+        </div>
+
+        <div id="content" class="content"></div>
+
+        <div id="paginationContainer" style="text-align: center; padding: 20px; display: none;">
+            <div class="pagination-controls">
+                <button id="prevPageBtn" class="pagination-btn" disabled>← Sebelumnya</button>
+                <span id="pageInfo" class="page-info">Halaman 1</span>
+                <button id="nextPageBtn" class="pagination-btn">Berikutnya →</button>
+            </div>
+        </div>
+
+        <footer></footer>
+
+        <div class="powered-by">
+            <p class="greeting" id="greeting">Selamat Pagi</p>
+            <p class="datetime" id="datetime">Loading...</p>
+            <p class="credit">Powered By <span class="creator">bang wily</span></p>
+        </div>
+    </div>
+
+    <div id="pageTransition">
+        <div class="transition-spinner"></div>
+        <p class="transition-text">Memuat halaman...</p>
+    </div>
+
+    <button id="scrollToTop" class="scroll-to-top" onclick="scrollToTop()">
+        ↑
+    </button>
+
+    <script src="background-manager.js"></script>
+    <script>
+        const API_BASE = '/api';
+        let currentPage = 1;
+        let genreId = '';
+        let genreTitle = '';
+
+        function showPageTransition() {
+            const transition = document.getElementById('pageTransition');
+            if (transition) {
+                transition.classList.add('active');
+            }
+        }
+
+        function hidePageTransition() {
+            const transition = document.getElementById('pageTransition');
+            if (transition) {
+                transition.classList.remove('active');
+            }
+        }
+
+        function navigateToHome(e) {
+            e.preventDefault();
+            showPageTransition();
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 400);
+        }
+
+        function navigateToDetail(animeId) {
+            showPageTransition();
+            setTimeout(() => {
+                window.location.href = `detail.html?id=${animeId}`;
+            }, 400);
+        }
+
+        function initThemeToggle() {
+            const themeToggle = document.getElementById('themeToggle');
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-mode');
+                    const isDark = document.body.classList.contains('dark-mode');
+                    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+                    
+                    themeToggle.style.transform = 'scale(0.8) rotate(180deg)';
+                    setTimeout(() => {
+                        themeToggle.style.transform = '';
+                    }, 200);
+                });
+            }
+        }
+
+        function initScrollToTop() {
+            const scrollBtn = document.getElementById('scrollToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    scrollBtn.classList.add('show');
+                } else {
+                    scrollBtn.classList.remove('show');
+                }
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 4000);
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'flex';
+            document.getElementById('content').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }
+
+        async function fetchGenreAnime(page = 1) {
+            try {
+                showLoading();
+                const response = await fetch(`${API_BASE}/mal-genres/${genreId}?page=${page}`);
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || 'Terjadi kesalahan');
+                }
+                
+                if (data.data && data.data.length > 0) {
+                    displayAnimeGrid(data.data);
+                    updatePagination(data.pagination);
+                    const cacheMsg = data.cached ? ' (dari cache)' : '';
+                    showNotification(`✅ ${data.data.length} anime ditemukan${cacheMsg}`, 'success');
+                } else {
+                    document.getElementById('content').innerHTML = '<div class="error-message">Tidak ada anime ditemukan untuk genre ini</div>';
+                    document.getElementById('paginationContainer').style.display = 'none';
+                }
+                hideLoading();
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('content').innerHTML = '<div class="error-message">Gagal memuat anime. Silakan coba lagi.</div>';
+                showNotification('❌ Gagal memuat data', 'error');
+                hideLoading();
+            }
+        }
+
+        function formatMembers(members) {
+            if (members >= 1000000) {
+                return (members / 1000000).toFixed(1) + 'M';
+            } else if (members >= 1000) {
+                return (members / 1000).toFixed(0) + 'K';
+            }
+            return members ? members.toString() : '';
+        }
+
+        function displayAnimeGrid(animeList) {
+            const content = document.getElementById('content');
+            
+            let html = '<div class="image-grid">';
+            
+            html += animeList.map(anime => {
+                const genres = anime.genres && anime.genres.length > 0 
+                    ? anime.genres.map(g => `<span class="genre-chip">${g.name || g}</span>`).join('')
+                    : '';
+                const studios = anime.studios || [];
+                const source = anime.source || '';
+                const themes = anime.themes || [];
+                const demographics = anime.demographics || [];
+                const typeBadgeClass = anime.type ? anime.type.toLowerCase() : '';
+                const status = anime.status || '';
+                const duration = anime.duration || '0 min';
+                const year = anime.aired?.prop?.from?.year || anime.year || '';
+                
+                return `
+                    <div class="image-card" onclick="navigateToDetail(${anime.mal_id})" data-id="${anime.mal_id}" data-type="${typeBadgeClass}">
+                        <div class="image-wrapper">
+                            <div class="image-loader"></div>
+                            ${anime.type ? `<div class="type-badge type-badge-${typeBadgeClass}">${anime.type}</div>` : ''}
+                            <img src="${anime.image}" 
+                                 alt="${anime.title}"
+                                 loading="lazy"
+                                 onload="this.parentElement.querySelector('.image-loader').style.display='none'; this.style.opacity='1';"
+                                 onerror="this.src='https://via.placeholder.com/220x300?text=No+Image'; this.parentElement.querySelector('.image-loader').style.display='none'; this.style.opacity='1';"
+                                 style="opacity: 0; transition: opacity 0.3s ease;">
+                        </div>
+                        <div class="card-content">
+                            <div class="card-title">${anime.title}</div>
+                            <div class="card-date">${anime.type || ''}${year ? ', ' + year : ''}${status ? ' · ' + status : ''} · ${anime.episodes || '?'} eps, ${duration}</div>
+                            ${genres ? `<div class="card-genres">${genres}</div>` : ''}
+                            <div class="card-synopsis">${anime.synopsis || 'Sinopsis tidak tersedia.'}</div>
+                            <div class="card-details">
+                                ${studios.length > 0 ? `<div class="detail-item"><strong>Studio:</strong> ${studios.map(s => s.name || s).join(', ')}</div>` : ''}
+                                ${source ? `<div class="detail-item"><strong>Source:</strong> ${source}</div>` : ''}
+                                ${themes.length > 0 ? `<div class="detail-item"><strong>Themes:</strong> ${themes.map(t => t.name || t).join(', ')}</div>` : ''}
+                                ${demographics.length > 0 ? `<div class="detail-item"><strong>Demographic:</strong> ${demographics.map(d => d.name || d).join(', ')}</div>` : ''}
+                            </div>
+                            <div class="card-footer">
+                                <div class="card-rating">${anime.score || 'N/A'}</div>
+                                ${anime.members ? `<div class="card-members">${formatMembers(anime.members)}</div>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            html += '</div>';
+            content.innerHTML = html;
+        }
+
+        function updatePagination(pagination) {
+            if (!pagination) {
+                document.getElementById('paginationContainer').style.display = 'none';
+                return;
+            }
+
+            const currentPageNum = pagination.currentPage || 1;
+            const totalPages = pagination.totalPages || 1;
+            
+            document.getElementById('pageInfo').textContent = `Halaman ${currentPageNum} dari ${totalPages}`;
+            document.getElementById('prevPageBtn').disabled = currentPageNum <= 1;
+            document.getElementById('nextPageBtn').disabled = currentPageNum >= totalPages;
+            document.getElementById('paginationContainer').style.display = 'block';
+            
+            currentPage = currentPageNum;
+        }
+
+        function goToPage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                fetchGenreAnime(currentPage - 1);
+                scrollToTop();
+            } else if (direction === 'next') {
+                fetchGenreAnime(currentPage + 1);
+                scrollToTop();
+            }
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                timeZone: 'Asia/Jakarta'
+            };
+            
+            const dateTimeStr = now.toLocaleString('id-ID', options);
+            document.getElementById('datetime').textContent = dateTimeStr;
+            
+            const hour = now.getHours();
+            let greeting = 'Selamat Malam';
+            if (hour >= 5 && hour < 11) {
+                greeting = 'Selamat Pagi';
+            } else if (hour >= 11 && hour < 15) {
+                greeting = 'Selamat Siang';
+            } else if (hour >= 15 && hour < 19) {
+                greeting = 'Selamat Sore';
+            }
+            document.getElementById('greeting').textContent = greeting;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            genreId = urlParams.get('id');
+            genreTitle = decodeURIComponent(urlParams.get('title') || 'Genre');
+            
+            document.getElementById('genreTitle').textContent = genreTitle;
+            document.title = `${genreTitle} - NimeKu`;
+            
+            initThemeToggle();
+            initScrollToTop();
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            if (genreId) {
+                fetchGenreAnime(1);
+            }
+            
+            setTimeout(() => {
+                hidePageTransition();
+                document.body.classList.add('page-loaded');
+            }, 300);
+        });
+
+        document.getElementById('prevPageBtn').addEventListener('click', () => goToPage('prev'));
+        document.getElementById('nextPageBtn').addEventListener('click', () => goToPage('next'));
+    </script>
+</body>
+</html>

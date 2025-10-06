@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detail Anime | NimeKu</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="detail.css">
+</head>
+<body>
+    <div class="container">
+        <div class="loading" id="pageLoading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Kembali ke halaman utama...</p>
+            <div class="loading-percentage" id="pageLoadingPercentage">0%</div>
+        </div>
+
+        <header>
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+            </button>
+            <div class="header-content">
+                <a href="#" class="back-btn" onclick="navigateToHome(event)">← Kembali</a>
+                <h1 id="animeTitle">Loading...</h1>
+            </div>
+        </header>
+
+        <div class="detail-container">
+            <div class="detail-sidebar">
+                <img id="animeImage" src="" alt="Anime Poster" class="detail-poster">
+                <div class="detail-stats">
+                    <div id="scoreSection"></div>
+                    <div id="rankSection"></div>
+                    <div id="popularitySection"></div>
+                    <div id="membersSection"></div>
+                </div>
+            </div>
+
+            <div class="detail-main">
+                <nav class="detail-tabs">
+                    <button class="detail-tab-btn active" data-tab="details">📋 Details</button>
+                    <button class="detail-tab-btn" data-tab="characters">👥 Characters</button>
+                    <button class="detail-tab-btn" data-tab="episodes">📺 Episodes</button>
+                    <button class="detail-tab-btn" data-tab="videos">🎬 Videos</button>
+                    <button class="detail-tab-btn" data-tab="stats">📊 Stats</button>
+                    <button class="detail-tab-btn" data-tab="reviews">⭐ Reviews</button>
+                    <button class="detail-tab-btn" data-tab="recommendations">💡 Recommendations</button>
+                    <button class="detail-tab-btn" data-tab="pictures">🖼️ Pictures</button>
+                </nav>
+
+                <div class="detail-content">
+                    <div id="detailsTab" class="detail-tab-content active">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat informasi...</p>
+                        </div>
+                    </div>
+
+                    <div id="charactersTab" class="detail-tab-content">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat karakter...</p>
+                        </div>
+                    </div>
+
+                    <div id="episodesTab" class="detail-tab-content">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat episode...</p>
+                        </div>
+                    </div>
+
+                    <div id="videosTab" class="detail-tab-content">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat video...</p>
+                        </div>
+                    </div>
+
+                    <div id="statsTab" class="detail-tab-content">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat statistik...</p>
+                        </div>
+                    </div>
+
+                    <div id="reviewsTab" class="detail-tab-content">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat review...</p>
+                        </div>
+                    </div>
+
+                    <div id="recommendationsTab" class="detail-tab-content">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat rekomendasi...</p>
+                        </div>
+                    </div>
+
+                    <div id="picturesTab" class="detail-tab-content">
+                        <div class="loading-section">
+                            <div class="spinner"></div>
+                            <p>Memuat gambar...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer></footer>
+
+        <div class="powered-by">
+            <p class="greeting" id="greeting">Selamat Pagi</p>
+            <p class="datetime" id="datetime">Loading...</p>
+            <p class="credit">Powered By <span class="creator">bang wily</span></p>
+        </div>
+    </div>
+
+    <div id="imageModal" class="image-modal">
+        <span class="modal-close" onclick="closeImageModal()">&times;</span>
+        <div class="modal-content">
+            <div class="modal-loader" id="modalLoader"></div>
+            <img id="modalImage" class="modal-image" style="display: none;">
+        </div>
+    </div>
+
+    <div id="videoModal" class="video-modal">
+        <span class="video-modal-close" onclick="closeVideoModal()">&times;</span>
+        <div class="video-modal-content">
+            <h3 id="videoModalTitle" class="video-modal-title"></h3>
+            <div class="video-player-wrapper">
+                <iframe id="videoPlayer" class="video-player" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+            <div id="videoAnimeInfo" class="video-anime-info">
+                <div class="video-info-grid">
+                    <div class="video-info-poster">
+                        <img id="videoAnimePoster" src="" alt="Anime Poster">
+                    </div>
+                    <div class="video-info-details">
+                        <h4 id="videoAnimeTitle">Loading...</h4>
+                        <div class="video-info-meta">
+                            <span id="videoAnimeType"></span>
+                            <span id="videoAnimeScore"></span>
+                            <span id="videoAnimeStatus"></span>
+                        </div>
+                        <div id="videoAnimeFullInfo" class="video-full-info"></div>
+                        <div id="videoAnimeSynopsis" class="video-info-synopsis-section"></div>
+                        <div id="videoAnimeGenres" class="video-info-genres"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="pageTransition">
+        <div class="transition-spinner"></div>
+        <p class="transition-text">Memuat halaman...</p>
+    </div>
+
+    <button id="scrollToTop" class="scroll-to-top" onclick="scrollToTop()">
+        ↑
+    </button>
+
+    <script src="background-manager.js"></script>
+    <script src="detail.js"></script>
+</body>
+</html>
