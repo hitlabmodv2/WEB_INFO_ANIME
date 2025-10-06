@@ -149,6 +149,30 @@ body {
     gap: 8px;
 }
 
+.drawer-divider {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #e0e0e0, transparent);
+    margin: 8px 0;
+}
+
+.developer-btn {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%) !important;
+    color: #333 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.developer-btn:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ffd700 100%) !important;
+    color: #000 !important;
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+}
+
+.developer-btn.active {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%) !important;
+    color: #333 !important;
+}
+
 body::before {
     content: '';
     position: fixed;
@@ -3192,4 +3216,18 @@ body.dark-mode .drawer-content .tab-btn:hover {
 body.dark-mode .drawer-content .tab-btn.active {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
+}
+
+body.dark-mode .drawer-divider {
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+body.dark-mode .developer-btn {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%) !important;
+    color: #333 !important;
+}
+
+body.dark-mode .developer-btn:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ffd700 100%) !important;
+    color: #000 !important;
 }
