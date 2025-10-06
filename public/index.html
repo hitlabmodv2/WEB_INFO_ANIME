@@ -39,8 +39,69 @@
             <button class="tab-btn" data-tab="search">🔍 Cari</button>
             <div class="drawer-divider"></div>
             <button class="tab-btn developer-btn" onclick="navigateWithTransition('developer.html')">👨‍💻 Developer</button>
+            <button class="tab-btn server-info-btn" id="serverInfoBtn">🖥️ Info Server</button>
         </div>
     </nav>
+
+    <div id="serverInfoModal" class="server-info-modal">
+        <div class="server-info-content">
+            <div class="server-info-header">
+                <h3>📊 Info Server</h3>
+                <button id="closeServerInfo" class="close-server-info">×</button>
+            </div>
+            <div class="server-info-body">
+                <div class="info-card">
+                    <div class="info-icon">💾</div>
+                    <div class="info-details">
+                        <div class="info-label">Total RAM</div>
+                        <div class="info-value" id="totalRam">-</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">📈</div>
+                    <div class="info-details">
+                        <div class="info-label">RAM Terpakai</div>
+                        <div class="info-value" id="usedRam">-</div>
+                        <div class="info-progress">
+                            <div class="progress-bar" id="ramProgressBar"></div>
+                        </div>
+                        <div class="info-percentage" id="ramPercentage">0%</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🆓</div>
+                    <div class="info-details">
+                        <div class="info-label">RAM Tersedia</div>
+                        <div class="info-value" id="freeRam">-</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">⚙️</div>
+                    <div class="info-details">
+                        <div class="info-label">CPU</div>
+                        <div class="info-value" id="cpuInfo">-</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">⏱️</div>
+                    <div class="info-details">
+                        <div class="info-label">Uptime</div>
+                        <div class="info-value" id="uptime">-</div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🌐</div>
+                    <div class="info-details">
+                        <div class="info-label">Platform</div>
+                        <div class="info-value" id="platform">-</div>
+                    </div>
+                </div>
+            </div>
+            <div class="server-info-footer">
+                <small>Update otomatis setiap 3 detik</small>
+            </div>
+        </div>
+    </div>
 
     <div class="container">
         <header>
