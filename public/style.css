@@ -910,13 +910,17 @@ footer p {
 }
 
 .powered-by {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     background: rgba(102, 126, 234, 0.1);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
     padding: 8px 10px;
-    margin: 15px auto 10px;
     text-align: center;
-    max-width: 100%;
+    width: 100%;
     border-top: 1px solid rgba(102, 126, 234, 0.2);
+    z-index: 999;
 }
 
 .powered-by .greeting {
@@ -949,7 +953,6 @@ footer p {
 @media (min-width: 480px) {
     .powered-by {
         padding: 8px 10px;
-        margin: 15px auto 10px;
     }
 }
 
@@ -2855,7 +2858,7 @@ body.dark-mode .modal-description {
 }
 
 body.dark-mode .powered-by {
-    background: rgba(45, 45, 68, 0.3);
+    background: rgba(45, 45, 68, 0.9);
     border-top: 1px solid rgba(165, 180, 252, 0.2);
 }
 
