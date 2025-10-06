@@ -286,17 +286,45 @@
             });
         }
 
-        const themeToggle = document.getElementById('themeToggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-mode');
-                localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-            });
+        function getJakartaHour() {
+            const now = new Date();
+            const jakartaTime = new Date(now.toLocaleString('en-US', { timeZone: 'Asia/Jakarta' }));
+            return jakartaTime.getHours();
+        }
 
-            if (localStorage.getItem('darkMode') === 'true') {
+        function shouldBeDarkMode() {
+            const hour = getJakartaHour();
+            return hour >= 15 || hour < 5;
+        }
+
+        function applyAutoTheme() {
+            const shouldDark = shouldBeDarkMode();
+            const isDark = document.body.classList.contains('dark-mode');
+            
+            if (shouldDark && !isDark) {
                 document.body.classList.add('dark-mode');
+            } else if (!shouldDark && isDark) {
+                document.body.classList.remove('dark-mode');
             }
         }
+
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            applyAutoTheme();
+            
+            themeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                
+                themeToggle.style.transform = 'scale(0.8) rotate(180deg)';
+                setTimeout(() => {
+                    themeToggle.style.transform = '';
+                }, 200);
+            });
+        }
+
+        setInterval(() => {
+            applyAutoTheme();
+        }, 60000);
 
         function initDrawerMenu() {
             const menuToggle = document.getElementById('menuToggle');
