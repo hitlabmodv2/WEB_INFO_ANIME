@@ -274,16 +274,17 @@
     <script src="background-manager.js"></script>
     <script src="developer-quotes.js"></script>
     <script>
-        window.addEventListener('scroll', () => {
+        function initScrollToTop() {
             const scrollBtn = document.getElementById('scrollToTop');
-            if (scrollBtn) {
+            
+            window.addEventListener('scroll', () => {
                 if (window.pageYOffset > 300) {
-                    scrollBtn.style.display = 'flex';
+                    scrollBtn.classList.add('show');
                 } else {
-                    scrollBtn.style.display = 'none';
+                    scrollBtn.classList.remove('show');
                 }
-            }
-        });
+            });
+        }
 
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
@@ -337,6 +338,7 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            initScrollToTop();
             initDrawerMenu();
         });
     </script>
