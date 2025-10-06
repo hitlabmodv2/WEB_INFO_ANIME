@@ -114,6 +114,46 @@
     }
 }
 
+.contact-section {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    animation: slideUp 0.6s ease;
+    margin-bottom: 20px;
+}
+
+.contact-section h3 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.3em;
+}
+
+.whatsapp-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    color: white;
+    padding: 15px 25px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.05em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.whatsapp-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+}
+
+.whatsapp-btn svg {
+    flex-shrink: 0;
+}
+
 .stats-section {
     background: white;
     border-radius: 15px;
@@ -428,6 +468,7 @@
 }
 
 body.dark-mode .developer-profile .profile-card,
+body.dark-mode .contact-section,
 body.dark-mode .stats-section,
 body.dark-mode .spoiler-section,
 body.dark-mode .tech-stack-section,
@@ -455,6 +496,7 @@ body.dark-mode .profile-description p::after {
     color: #a5b4fc;
 }
 
+body.dark-mode .contact-section h3,
 body.dark-mode .stats-section h3,
 body.dark-mode .spoiler-section h3,
 body.dark-mode .tech-stack-section h3,
