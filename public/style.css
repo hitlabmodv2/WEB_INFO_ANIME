@@ -284,13 +284,16 @@ header {
 
 .notification {
     display: none;
-    padding: 12px 15px;
+    padding: 14px 16px;
     margin-bottom: 15px;
-    border-radius: 10px;
-    text-align: center;
-    font-size: 0.9em;
+    border-radius: 12px;
+    text-align: left;
+    font-size: 0.95em;
     font-weight: 500;
     animation: slideDown 0.3s ease;
+    max-width: 100%;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 @keyframes slideDown {
@@ -305,27 +308,188 @@ header {
 }
 
 .notification.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #0d4a1f;
+    border: 2px solid #a3d9a5;
 }
 
 .notification.info {
-    background: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
+    background: linear-gradient(135deg, #d1ecf1 0%, #bee5eb 100%);
+    color: #0a3d47;
+    border: 2px solid #8fccd4;
 }
 
 .notification.warning {
-    background: #fff3cd;
-    color: #856404;
-    border: 1px solid #ffeeba;
+    background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
+    color: #6b4d03;
+    border: 2px solid #f0d98d;
 }
 
 .notification.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #5a1018;
+    border: 2px solid #e8a6ad;
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.notification-header strong {
+    font-size: 1em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    letter-spacing: 0.3px;
+}
+
+.anime-count-badge {
+    background: rgba(13, 74, 31, 0.25);
+    color: #0d4a1f;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 700;
+    white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.notification-anime-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #a3d9a5 transparent;
+}
+
+.notification-anime-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notification-anime-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.notification-anime-list::-webkit-scrollbar-thumb {
+    background: #a3d9a5;
+    border-radius: 3px;
+}
+
+.notification-anime-item {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 8px;
+    font-size: 0.9em;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.notification-anime-item:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateX(4px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.anime-number {
+    font-weight: 800;
+    color: #0d4a1f;
+    min-width: 24px;
+    font-size: 1em;
+}
+
+.anime-title {
+    font-weight: 600;
+    color: #0d4a1f;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+}
+
+.anime-time {
+    font-size: 0.85em;
+    color: #0d4a1f;
+    font-weight: 600;
+    opacity: 0.85;
+    white-space: nowrap;
+    background: rgba(13, 74, 31, 0.1);
+    padding: 3px 8px;
+    border-radius: 12px;
+}
+
+.notification-more {
+    text-align: center;
+    padding: 10px;
+    background: rgba(13, 74, 31, 0.15);
+    border-radius: 8px;
+    font-size: 0.9em;
+    color: #0d4a1f;
+    font-weight: 700;
+    margin-top: 6px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+    .notification {
+        font-size: 0.85em;
+        padding: 10px 12px;
+    }
+    
+    .notification-header strong {
+        font-size: 0.9em;
+    }
+    
+    .anime-count-badge {
+        font-size: 0.8em;
+        padding: 3px 8px;
+    }
+    
+    .notification-anime-item {
+        gap: 6px;
+        padding: 5px 6px;
+        font-size: 0.8em;
+    }
+    
+    .anime-title {
+        font-size: 0.9em;
+    }
+    
+    .anime-time {
+        font-size: 0.75em;
+    }
+    
+    .notification-anime-list {
+        max-height: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .notification {
+        font-size: 0.8em;
+    }
+    
+    .notification-anime-item {
+        grid-template-columns: auto 1fr;
+        gap: 5px;
+    }
+    
+    .anime-time {
+        grid-column: 2;
+        text-align: right;
+        font-size: 0.7em;
+    }
 }
 
 .tabs {
@@ -2671,6 +2835,70 @@ body.dark-mode .subtitle {
 body.dark-mode .last-update {
     background: #1f1f2e;
     color: #9ca3af;
+}
+
+body.dark-mode .notification.success {
+    background: linear-gradient(135deg, #1a3a2a 0%, #2d5a3d 100%);
+    color: #a3d9a5;
+    border: 2px solid #3d6d4f;
+}
+
+body.dark-mode .notification.info {
+    background: linear-gradient(135deg, #1a3440 0%, #2d4f5e 100%);
+    color: #8fccd4;
+    border: 2px solid #3d5d6a;
+}
+
+body.dark-mode .notification.warning {
+    background: linear-gradient(135deg, #3d3520 0%, #5a4f2d 100%);
+    color: #f0d98d;
+    border: 2px solid #6a5d3d;
+}
+
+body.dark-mode .notification.error {
+    background: linear-gradient(135deg, #3d1a1f 0%, #5a2d33 100%);
+    color: #e8a6ad;
+    border: 2px solid #6a3d44;
+}
+
+body.dark-mode .notification-header strong {
+    color: #a3d9a5;
+}
+
+body.dark-mode .anime-count-badge {
+    background: rgba(163, 217, 165, 0.25);
+    color: #a3d9a5;
+}
+
+body.dark-mode .notification-anime-list {
+    scrollbar-color: #3d6d4f transparent;
+}
+
+body.dark-mode .notification-anime-list::-webkit-scrollbar-thumb {
+    background: #3d6d4f;
+}
+
+body.dark-mode .notification-anime-item {
+    background: rgba(45, 90, 61, 0.3);
+}
+
+body.dark-mode .notification-anime-item:hover {
+    background: rgba(45, 90, 61, 0.5);
+}
+
+body.dark-mode .anime-number,
+body.dark-mode .anime-title {
+    color: #a3d9a5;
+}
+
+body.dark-mode .anime-time {
+    color: #a3d9a5;
+    background: rgba(163, 217, 165, 0.15);
+}
+
+body.dark-mode .notification-more {
+    background: rgba(163, 217, 165, 0.2);
+    color: #a3d9a5;
 }
 
 body.dark-mode .tab-btn {

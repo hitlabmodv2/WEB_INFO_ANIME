@@ -222,15 +222,21 @@ function updateLastUpdateTime() {
     document.getElementById('lastUpdate').textContent = timeStr;
 }
 
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', isHTML = false) {
     const notification = document.getElementById('notification');
-    notification.textContent = message;
+    
+    if (isHTML) {
+        notification.innerHTML = message;
+    } else {
+        notification.textContent = message;
+    }
+    
     notification.className = `notification ${type}`;
     notification.style.display = 'block';
     
     setTimeout(() => {
         notification.style.display = 'none';
-    }, 4000);
+    }, 6000);
 }
 
 async function fetchSchedule(page = 1) {
@@ -251,7 +257,35 @@ async function fetchSchedule(page = 1) {
             const todaySchedule = result.data.filter(item => item.day === today);
             
             if (todaySchedule.length > 0) {
-                showNotification(`✅ Ada ${todaySchedule.length} anime tayang hari ini (${today})!`, 'success');
+                let notificationHTML = `
+                    <div class="notification-header">
+                        <strong>🔴 TAYANG HARI INI (${today})</strong>
+                        <span class="anime-count-badge">${todaySchedule.length} Anime</span>
+                    </div>
+                    <div class="notification-anime-list">
+                `;
+                
+                todaySchedule.slice(0, 5).forEach((anime, index) => {
+                    const time = anime.time || 'TBA';
+                    notificationHTML += `
+                        <div class="notification-anime-item">
+                            <span class="anime-number">${index + 1}.</span>
+                            <span class="anime-title">${anime.title}</span>
+                            <span class="anime-time">⏰ ${time}</span>
+                        </div>
+                    `;
+                });
+                
+                if (todaySchedule.length > 5) {
+                    notificationHTML += `
+                        <div class="notification-more">
+                            +${todaySchedule.length - 5} anime lainnya
+                        </div>
+                    `;
+                }
+                
+                notificationHTML += `</div>`;
+                showNotification(notificationHTML, 'success', true);
             } else {
                 showNotification(`📅 Total ${result.pagination.totalItems} anime terjadwal`, 'info');
             }
@@ -1605,6 +1639,67 @@ function startAutoUpdate() {
         clearInterval(autoUpdateInterval);
     }
     
+    autoUpdateInterval = setInterval(() => {
+        console.log('🔄 Auto-refresh: Memperbarui data anime...');
+        
+        if (currentTab === 'schedule') {
+            fetchSchedule(currentPage)
+                .then(() => {
+                    console.log('✅ Jadwal anime berhasil diperbarui');
+                    updateLastUpdateTime();
+                })
+                .catch((error) => {
+                    console.error('❌ Gagal memperbarui jadwal:', error);
+                    showNotification('❌ Gagal memperbarui jadwal anime', 'error');
+                });
+        } else if (currentTab === 'airing') {
+            fetchAiring(currentPage)
+                .then(() => {
+                    console.log('✅ Anime tayang berhasil diperbarui');
+                    showNotification('🔄 Data anime telah diperbarui', 'info');
+                    updateLastUpdateTime();
+                })
+                .catch((error) => {
+                    console.error('❌ Gagal memperbarui anime tayang:', error);
+                    showNotification('❌ Gagal memperbarui data anime', 'error');
+                });
+        } else if (currentTab === 'new') {
+            fetchNew(currentPage)
+                .then(() => {
+                    console.log('✅ Anime terbaru berhasil diperbarui');
+                    showNotification('🔄 Data anime telah diperbarui', 'info');
+                    updateLastUpdateTime();
+                })
+                .catch((error) => {
+                    console.error('❌ Gagal memperbarui anime terbaru:', error);
+                    showNotification('❌ Gagal memperbarui data anime', 'error');
+                });
+        } else if (currentTab === 'popular') {
+            fetchPopular(currentPage)
+                .then(() => {
+                    console.log('✅ Anime populer berhasil diperbarui');
+                    showNotification('🔄 Data anime telah diperbarui', 'info');
+                    updateLastUpdateTime();
+                })
+                .catch((error) => {
+                    console.error('❌ Gagal memperbarui anime populer:', error);
+                    showNotification('❌ Gagal memperbarui data anime', 'error');
+                });
+        } else if (currentTab === 'season' && currentSeasonData.year && currentSeasonData.season) {
+            fetchSeasonAnime(currentSeasonData.year, currentSeasonData.season, currentPage)
+                .then(() => {
+                    console.log('✅ Anime musiman berhasil diperbarui');
+                    showNotification('🔄 Data anime telah diperbarui', 'info');
+                    updateLastUpdateTime();
+                })
+                .catch((error) => {
+                    console.error('❌ Gagal memperbarui anime musiman:', error);
+                    showNotification('❌ Gagal memperbarui data anime', 'error');
+                });
+        }
+    }, 5 * 60 * 1000);
+    
+    console.log('✅ Auto-update diaktifkan: akan refresh setiap 5 menit');
 }
 
 async function getUserTimezone() {

@@ -16,6 +16,9 @@ let genreAnimeCache = {};
 let genreAnimeCacheTimestamp = {};
 const GENRE_ANIME_CACHE_DURATION = 10 * 60 * 1000;
 
+let scheduleCache = {};
+const SCHEDULE_CACHE_DURATION = 5 * 60 * 1000;
+
 let lastRequestTime = 0;
 const MIN_REQUEST_DELAY = 1000;
 
@@ -33,17 +36,18 @@ async function delayIfNeeded() {
 
 export const getSchedule = async (req, res) => {
   try {
-    const { type, page = 1 } = req.query;
-    const params = { 
-      page: parseInt(page),
-      limit: 25
-    };
+    const { type, page = 1, day } = req.query;
+    const now = Date.now();
     
-    if (type && type !== 'all' && type !== '') {
-      params.filter = type.toLowerCase();
+    const baseCacheKey = `${day || 'all'}_${type || 'all'}`;
+    const fullCacheKey = `${baseCacheKey}_page_${page}`;
+    
+    const cachedEntry = scheduleCache[fullCacheKey];
+    if (cachedEntry && (now - cachedEntry.cachedAt < SCHEDULE_CACHE_DURATION)) {
+      return res.json(cachedEntry.data);
     }
     
-    const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
+    await delayIfNeeded();
     
     const dayMapping = {
       'monday': 'Senin',
@@ -59,42 +63,110 @@ export const getSchedule = async (req, res) => {
       'thursdays': 'Kamis',
       'fridays': 'Jumat',
       'saturdays': 'Sabtu',
-      'sundays': 'Minggu'
+      'sundays': 'Minggu',
+      'senin': 'Senin',
+      'selasa': 'Selasa',
+      'rabu': 'Rabu',
+      'kamis': 'Kamis',
+      'jumat': 'Jumat',
+      'sabtu': 'Sabtu',
+      'minggu': 'Minggu'
     };
 
-    let formattedData = response.data.data.map(anime => {
-      const day = anime.broadcast?.day || 'unknown';
-      const indonesianDay = dayMapping[day.toLowerCase()] || 'Tidak Diketahui';
-      
-      return {
-        mal_id: anime.mal_id,
-        title: anime.title,
-        image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
-        day: indonesianDay,
-        time: anime.broadcast?.time || 'TBA',
-        aired: anime.aired?.string || 'TBA',
-        airedFrom: anime.aired?.from || null,
-        episode: `Episodes: ${anime.episodes || '?'}`,
-        score: anime.score,
-        type: anime.type,
-        status: anime.status,
-        broadcast: anime.broadcast
-      };
-    });
-
-    const pagination = response.data.pagination || {};
-
-    res.json({
-      data: formattedData,
-      pagination: {
-        currentPage: pagination.current_page || parseInt(page),
-        totalPages: pagination.last_visible_page || 1,
-        totalItems: pagination.items?.total || formattedData.length,
-        itemsPerPage: pagination.items?.per_page || 25,
-        hasNextPage: pagination.has_next_page || false,
-        hasPrevPage: (parseInt(page) > 1)
+    let allScheduleData = [];
+    let currentPage = 1;
+    let hasNextPage = true;
+    const maxPages = 10;
+    
+    while (hasNextPage && currentPage <= maxPages) {
+      try {
+        if (currentPage > 1) {
+          await delayIfNeeded();
+        }
+        
+        const params = { page: currentPage };
+        
+        if (day) {
+          params.filter = day.toLowerCase();
+        }
+        
+        const response = await axios.get(`${JIKAN_BASE}/schedules`, { params });
+        
+        if (response.data && response.data.data && response.data.data.length > 0) {
+          const pageData = response.data.data.map(anime => {
+            const broadcastDay = anime.broadcast?.day || 'unknown';
+            const indonesianDay = dayMapping[broadcastDay.toLowerCase()] || 'Tidak Diketahui';
+            
+            return {
+              mal_id: anime.mal_id,
+              title: anime.title,
+              image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+              day: indonesianDay,
+              time: anime.broadcast?.time || 'TBA',
+              aired: anime.aired?.string || 'TBA',
+              airedFrom: anime.aired?.from || null,
+              episode: `Episodes: ${anime.episodes || '?'}`,
+              score: anime.score,
+              type: anime.type,
+              status: anime.status,
+              broadcast: anime.broadcast
+            };
+          });
+          
+          allScheduleData = allScheduleData.concat(pageData);
+          
+          hasNextPage = response.data.pagination?.has_next_page || false;
+          currentPage++;
+        } else {
+          hasNextPage = false;
+        }
+      } catch (pageError) {
+        console.error(`Error fetching schedule page ${currentPage}:`, pageError.message);
+        hasNextPage = false;
       }
+    }
+    
+    if (type && type !== 'all' && type !== '') {
+      allScheduleData = allScheduleData.filter(anime => 
+        anime.type && anime.type.toLowerCase() === type.toLowerCase()
+      );
+    }
+
+    allScheduleData.sort((a, b) => {
+      const dayOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+      const dayDiff = dayOrder.indexOf(a.day) - dayOrder.indexOf(b.day);
+      if (dayDiff !== 0) return dayDiff;
+      
+      const timeA = a.time || '99:99';
+      const timeB = b.time || '99:99';
+      return timeA.localeCompare(timeB);
     });
+
+    const pageNum = parseInt(page);
+    const itemsPerPage = 100;
+    const startIdx = (pageNum - 1) * itemsPerPage;
+    const endIdx = startIdx + itemsPerPage;
+    const paginatedData = allScheduleData.slice(startIdx, endIdx);
+    const totalPages = Math.ceil(allScheduleData.length / itemsPerPage);
+
+    const result = {
+      data: paginatedData,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: totalPages,
+        totalItems: allScheduleData.length,
+        itemsPerPage: itemsPerPage,
+        hasNextPage: pageNum < totalPages,
+        hasPrevPage: pageNum > 1
+      }
+    };
+
+    scheduleCache[fullCacheKey] = {
+      data: result,
+      cachedAt: now
+    };
+
+    res.json(result);
   } catch (error) {
     console.error('Jikan API Error:', error.message);
     res.status(500).json({ error: 'Gagal mengambil jadwal anime' });
