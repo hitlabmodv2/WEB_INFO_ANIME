@@ -6,6 +6,7 @@ let isLoading = false;
 let hasMoreData = true;
 let allAnimeData = [];
 let currentType = '';
+let isFirstLoad = true;
 
 const API_BASE = '/api';
 
@@ -239,7 +240,7 @@ function showNotification(message, type = 'info', isHTML = false) {
     }, 6000);
 }
 
-async function fetchSchedule(page = 1) {
+async function fetchSchedule(page = 1, delayNotification = false) {
     try {
         if (isLoading) return;
         isLoading = true;
@@ -256,39 +257,48 @@ async function fetchSchedule(page = 1) {
             const today = new Date().toLocaleDateString('id-ID', { weekday: 'long' });
             const todaySchedule = result.data.filter(item => item.day === today);
             
-            if (todaySchedule.length > 0) {
-                let notificationHTML = `
-                    <div class="notification-header">
-                        <strong>🔴 TAYANG HARI INI (${today})</strong>
-                        <span class="anime-count-badge">${todaySchedule.length} Anime</span>
-                    </div>
-                    <div class="notification-anime-list">
-                `;
-                
-                todaySchedule.slice(0, 5).forEach((anime, index) => {
-                    const time = anime.time || 'TBA';
-                    notificationHTML += `
-                        <div class="notification-anime-item">
-                            <span class="anime-number">${index + 1}.</span>
-                            <span class="anime-title">${anime.title}</span>
-                            <span class="anime-time">⏰ ${time}</span>
+            const showScheduleNotification = () => {
+                if (todaySchedule.length > 0) {
+                    let notificationHTML = `
+                        <div class="notification-header">
+                            <strong>🔴 TAYANG HARI INI (${today})</strong>
+                            <span class="anime-count-badge">${todaySchedule.length} Anime</span>
                         </div>
+                        <div class="notification-anime-list">
                     `;
-                });
-                
-                if (todaySchedule.length > 5) {
-                    notificationHTML += `
-                        <div class="notification-more">
-                            +${todaySchedule.length - 5} anime lainnya
-                        </div>
-                    `;
+                    
+                    todaySchedule.slice(0, 5).forEach((anime, index) => {
+                        const time = anime.time || 'TBA';
+                        notificationHTML += `
+                            <div class="notification-anime-item">
+                                <span class="anime-number">${index + 1}.</span>
+                                <span class="anime-title">${anime.title}</span>
+                                <span class="anime-time">⏰ ${time}</span>
+                            </div>
+                        `;
+                    });
+                    
+                    if (todaySchedule.length > 5) {
+                        notificationHTML += `
+                            <div class="notification-more">
+                                +${todaySchedule.length - 5} anime lainnya
+                            </div>
+                        `;
+                    }
+                    
+                    notificationHTML += `</div>`;
+                    showNotification(notificationHTML, 'success', true);
+                } else {
+                    showNotification(`📅 Total ${result.pagination.totalItems} anime terjadwal`, 'info');
                 }
-                
-                notificationHTML += `</div>`;
-                showNotification(notificationHTML, 'success', true);
+            };
+            
+            if (delayNotification) {
+                setTimeout(showScheduleNotification, 20000);
             } else {
-                showNotification(`📅 Total ${result.pagination.totalItems} anime terjadwal`, 'info');
+                showScheduleNotification();
             }
+            
             hasMoreData = result.pagination.hasNextPage;
         } else {
             showNotification('⚠️ Belum ada jadwal anime tersedia', 'warning');
@@ -1565,16 +1575,21 @@ function loadTab(tab) {
     setTimeout(() => {
         switch(tab) {
             case 'schedule':
-                fetchSchedule(1);
+                const shouldDelay = isFirstLoad && tab === 'schedule';
+                fetchSchedule(1, shouldDelay);
+                if (isFirstLoad) isFirstLoad = false;
                 break;
             case 'airing':
                 fetchAiring(1);
+                if (isFirstLoad) isFirstLoad = false;
                 break;
             case 'new':
                 fetchNew(1);
+                if (isFirstLoad) isFirstLoad = false;
                 break;
             case 'popular':
                 fetchPopular(1);
+                if (isFirstLoad) isFirstLoad = false;
                 break;
             case 'season':
                 displaySeasonList();
@@ -1582,16 +1597,20 @@ function loadTab(tab) {
                 const current = seasons[2];
                 currentSeasonData = { year: current.year, season: current.season, page: 1 };
                 fetchSeasonAnime(current.year, current.season, 1);
+                if (isFirstLoad) isFirstLoad = false;
                 break;
             case 'recommendations':
                 fetchRecommendations(1);
+                if (isFirstLoad) isFirstLoad = false;
                 break;
             case 'genres':
                 fetchGenres();
+                if (isFirstLoad) isFirstLoad = false;
                 break;
             case 'search':
                 document.getElementById('content').innerHTML = '<div class="error-message">📝 Masukkan kata kunci pencarian di atas</div>';
                 document.getElementById('paginationContainer').style.display = 'none';
+                if (isFirstLoad) isFirstLoad = false;
                 break;
         }
         hideLoading();
