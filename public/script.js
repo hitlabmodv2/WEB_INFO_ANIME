@@ -237,7 +237,7 @@ function showNotification(message, type = 'info', isHTML = false) {
     
     setTimeout(() => {
         notification.style.display = 'none';
-    }, 6000);
+    }, 20000);
 }
 
 async function fetchSchedule(page = 1, delayNotification = false) {
@@ -257,46 +257,38 @@ async function fetchSchedule(page = 1, delayNotification = false) {
             const today = new Date().toLocaleDateString('id-ID', { weekday: 'long' });
             const todaySchedule = result.data.filter(item => item.day === today);
             
-            const showScheduleNotification = () => {
-                if (todaySchedule.length > 0) {
-                    let notificationHTML = `
-                        <div class="notification-header">
-                            <strong>🔴 TAYANG HARI INI (${today})</strong>
-                            <span class="anime-count-badge">${todaySchedule.length} Anime</span>
+            if (todaySchedule.length > 0) {
+                let notificationHTML = `
+                    <div class="notification-header">
+                        <strong>🔴 TAYANG HARI INI (${today})</strong>
+                        <span class="anime-count-badge">${todaySchedule.length} Anime</span>
+                    </div>
+                    <div class="notification-anime-list">
+                `;
+                
+                todaySchedule.slice(0, 5).forEach((anime, index) => {
+                    const time = anime.time || 'TBA';
+                    notificationHTML += `
+                        <div class="notification-anime-item">
+                            <span class="anime-number">${index + 1}.</span>
+                            <span class="anime-title">${anime.title}</span>
+                            <span class="anime-time">⏰ ${time}</span>
                         </div>
-                        <div class="notification-anime-list">
                     `;
-                    
-                    todaySchedule.slice(0, 5).forEach((anime, index) => {
-                        const time = anime.time || 'TBA';
-                        notificationHTML += `
-                            <div class="notification-anime-item">
-                                <span class="anime-number">${index + 1}.</span>
-                                <span class="anime-title">${anime.title}</span>
-                                <span class="anime-time">⏰ ${time}</span>
-                            </div>
-                        `;
-                    });
-                    
-                    if (todaySchedule.length > 5) {
-                        notificationHTML += `
-                            <div class="notification-more">
-                                +${todaySchedule.length - 5} anime lainnya
-                            </div>
-                        `;
-                    }
-                    
-                    notificationHTML += `</div>`;
-                    showNotification(notificationHTML, 'success', true);
-                } else {
-                    showNotification(`📅 Total ${result.pagination.totalItems} anime terjadwal`, 'info');
+                });
+                
+                if (todaySchedule.length > 5) {
+                    notificationHTML += `
+                        <div class="notification-more">
+                            +${todaySchedule.length - 5} anime lainnya
+                        </div>
+                    `;
                 }
-            };
-            
-            if (delayNotification) {
-                setTimeout(showScheduleNotification, 20000);
+                
+                notificationHTML += `</div>`;
+                showNotification(notificationHTML, 'success', true);
             } else {
-                showScheduleNotification();
+                showNotification(`📅 Total ${result.pagination.totalItems} anime terjadwal`, 'info');
             }
             
             hasMoreData = result.pagination.hasNextPage;
@@ -329,7 +321,39 @@ async function fetchNew(page = 1) {
         
         if (result.data && result.data.length > 0) {
             allAnimeData = result.data;
-            showNotification(`✅ Ditemukan ${result.pagination.totalItems} anime terbaru`, 'success');
+            
+            const topAnime = result.data.slice(0, 3);
+            let notificationHTML = `
+                <div class="notification-header">
+                    <strong>🆕 ANIME TERBARU</strong>
+                    <span class="anime-count-badge">${result.pagination.totalItems} Total</span>
+                </div>
+                <div class="notification-anime-list">
+            `;
+            
+            topAnime.forEach((anime, index) => {
+                const title = anime.title || 'Unknown';
+                const type = anime.type || 'TV';
+                const score = anime.score ? `⭐ ${anime.score}` : '🆕 NEW';
+                notificationHTML += `
+                    <div class="notification-anime-item">
+                        <span class="anime-number">${index + 1}.</span>
+                        <span class="anime-title">${title}</span>
+                        <span class="anime-time">${type} ${score}</span>
+                    </div>
+                `;
+            });
+            
+            if (result.data.length > 3) {
+                notificationHTML += `
+                    <div class="notification-more">
+                        +${result.data.length - 3} anime terbaru lainnya
+                    </div>
+                `;
+            }
+            
+            notificationHTML += `</div>`;
+            showNotification(notificationHTML, 'success', true);
             hasMoreData = result.pagination.hasNextPage;
         } else {
             hasMoreData = false;
@@ -358,7 +382,40 @@ async function fetchPopular(page = 1) {
         
         if (result.data && result.data.length > 0) {
             allAnimeData = result.data;
-            showNotification(`✅ Ditemukan ${result.pagination.totalItems} anime populer`, 'success');
+            
+            const topPopular = result.data.slice(0, 3);
+            let notificationHTML = `
+                <div class="notification-header">
+                    <strong>🔥 ANIME POPULER</strong>
+                    <span class="anime-count-badge">${result.pagination.totalItems} Total</span>
+                </div>
+                <div class="notification-anime-list">
+            `;
+            
+            topPopular.forEach((anime, index) => {
+                const title = anime.title || 'Unknown';
+                const score = anime.score ? `⭐ ${anime.score}` : '';
+                const members = anime.members ? `👥 ${(anime.members / 1000).toFixed(0)}K` : '';
+                const info = [score, members].filter(x => x).join(' • ');
+                notificationHTML += `
+                    <div class="notification-anime-item">
+                        <span class="anime-number">${index + 1}.</span>
+                        <span class="anime-title">${title}</span>
+                        <span class="anime-time">${info}</span>
+                    </div>
+                `;
+            });
+            
+            if (result.data.length > 3) {
+                notificationHTML += `
+                    <div class="notification-more">
+                        +${result.data.length - 3} anime populer lainnya
+                    </div>
+                `;
+            }
+            
+            notificationHTML += `</div>`;
+            showNotification(notificationHTML, 'success', true);
             hasMoreData = result.pagination.hasNextPage;
         } else {
             hasMoreData = false;
@@ -411,7 +468,38 @@ async function fetchRecommendations(page = 1) {
         const result = await response.json();
         
         if (result.success && result.data && result.data.length > 0) {
-            showNotification(`✅ Ditemukan ${result.count} rekomendasi anime dari User MyAnimeList!`, 'success');
+            const topRecs = result.data.slice(0, 3);
+            let notificationHTML = `
+                <div class="notification-header">
+                    <strong>💡 REKOMENDASI DARI MAL</strong>
+                    <span class="anime-count-badge">${result.count} Total</span>
+                </div>
+                <div class="notification-anime-list">
+            `;
+            
+            topRecs.forEach((rec, index) => {
+                const leftTitle = rec.leftAnime?.title || 'Unknown';
+                const rightTitle = rec.rightAnime?.title || 'Unknown';
+                const username = rec.user?.username || 'Anonymous';
+                notificationHTML += `
+                    <div class="notification-anime-item">
+                        <span class="anime-number">${index + 1}.</span>
+                        <span class="anime-title">${leftTitle} → ${rightTitle}</span>
+                        <span class="anime-time">👤 ${username}</span>
+                    </div>
+                `;
+            });
+            
+            if (result.data.length > 3) {
+                notificationHTML += `
+                    <div class="notification-more">
+                        +${result.data.length - 3} rekomendasi lainnya
+                    </div>
+                `;
+            }
+            
+            notificationHTML += `</div>`;
+            showNotification(notificationHTML, 'success', true);
             displayRecommendations(result.data, result.pagination);
             updatePagination(result.pagination);
             hasMoreData = result.pagination.hasNextPage;
@@ -531,9 +619,69 @@ async function fetchAiring(page = 1) {
             allAnimeData = [...liveAnime, ...upcomingAnime];
             
             if (liveAnime.length > 0) {
-                showNotification(`🔴 LIVE: ${liveAnime.length} anime sedang tayang sekarang!`, 'success');
+                let notificationHTML = `
+                    <div class="notification-header">
+                        <strong>🔴 LIVE SEKARANG</strong>
+                        <span class="anime-count-badge">${liveAnime.length} Anime</span>
+                    </div>
+                    <div class="notification-anime-list">
+                `;
+                
+                liveAnime.slice(0, 3).forEach((anime, index) => {
+                    const title = anime.title || 'Unknown';
+                    const time = anime.broadcast?.time || 'TBA';
+                    const type = anime.type || 'TV';
+                    notificationHTML += `
+                        <div class="notification-anime-item">
+                            <span class="anime-number">${index + 1}.</span>
+                            <span class="anime-title">${title}</span>
+                            <span class="anime-time">${type} • ⏰ ${time}</span>
+                        </div>
+                    `;
+                });
+                
+                if (liveAnime.length > 3) {
+                    notificationHTML += `
+                        <div class="notification-more">
+                            +${liveAnime.length - 3} anime LIVE lainnya
+                        </div>
+                    `;
+                }
+                
+                notificationHTML += `</div>`;
+                showNotification(notificationHTML, 'success', true);
             } else {
-                showNotification(`📺 ${result.pagination.totalItems} anime sedang tayang musim ini`, 'info');
+                let notificationHTML = `
+                    <div class="notification-header">
+                        <strong>📺 SEDANG TAYANG MUSIM INI</strong>
+                        <span class="anime-count-badge">${result.pagination.totalItems} Total</span>
+                    </div>
+                    <div class="notification-anime-list">
+                `;
+                
+                upcomingAnime.slice(0, 3).forEach((anime, index) => {
+                    const title = anime.title || 'Unknown';
+                    const day = anime.broadcast?.day || 'TBA';
+                    const time = anime.broadcast?.time || 'TBA';
+                    notificationHTML += `
+                        <div class="notification-anime-item">
+                            <span class="anime-number">${index + 1}.</span>
+                            <span class="anime-title">${title}</span>
+                            <span class="anime-time">📅 ${day} ${time}</span>
+                        </div>
+                    `;
+                });
+                
+                if (upcomingAnime.length > 3) {
+                    notificationHTML += `
+                        <div class="notification-more">
+                            +${upcomingAnime.length - 3} anime lainnya
+                        </div>
+                    `;
+                }
+                
+                notificationHTML += `</div>`;
+                showNotification(notificationHTML, 'info', true);
             }
             hasMoreData = result.pagination.hasNextPage;
         } else {
@@ -653,16 +801,49 @@ async function fetchSeasonAnime(year, season, page = 1) {
         const result = await response.json();
         
         const seasonLabels = {
-            'winter': 'Winter',
-            'spring': 'Spring',
-            'summer': 'Summer',
-            'fall': 'Fall'
+            'winter': 'Winter ❄️',
+            'spring': 'Spring 🌸',
+            'summer': 'Summer ☀️',
+            'fall': 'Fall 🍂'
         };
         
         if (result.data && result.data.length > 0) {
             allAnimeData = result.data;
             const title = `${seasonLabels[season]} ${year}`;
-            showNotification(`✅ ${title} - ${result.pagination.totalItems} anime`, 'success');
+            
+            const topSeason = result.data.slice(0, 3);
+            let notificationHTML = `
+                <div class="notification-header">
+                    <strong>🌸 ${title.toUpperCase()}</strong>
+                    <span class="anime-count-badge">${result.pagination.totalItems} Anime</span>
+                </div>
+                <div class="notification-anime-list">
+            `;
+            
+            topSeason.forEach((anime, index) => {
+                const animeTitle = anime.title || 'Unknown';
+                const score = anime.score ? `⭐ ${anime.score}` : '';
+                const type = anime.type || 'TV';
+                const info = [type, score].filter(x => x).join(' • ');
+                notificationHTML += `
+                    <div class="notification-anime-item">
+                        <span class="anime-number">${index + 1}.</span>
+                        <span class="anime-title">${animeTitle}</span>
+                        <span class="anime-time">${info}</span>
+                    </div>
+                `;
+            });
+            
+            if (result.data.length > 3) {
+                notificationHTML += `
+                    <div class="notification-more">
+                        +${result.data.length - 3} anime ${season} lainnya
+                    </div>
+                `;
+            }
+            
+            notificationHTML += `</div>`;
+            showNotification(notificationHTML, 'success', true);
             hasMoreData = result.pagination.hasNextPage;
         } else {
             hasMoreData = false;
@@ -684,7 +865,44 @@ async function searchAnime(keyword) {
         allAnimeData = data;
         displayImageGrid(data);
         document.getElementById('paginationContainer').style.display = 'none';
-        showNotification(`✅ Ditemukan ${data.length} hasil untuk "${keyword}"`, 'success');
+        
+        if (data.length > 0) {
+            const topResults = data.slice(0, 3);
+            let notificationHTML = `
+                <div class="notification-header">
+                    <strong>🔍 HASIL PENCARIAN "${keyword.toUpperCase()}"</strong>
+                    <span class="anime-count-badge">${data.length} Hasil</span>
+                </div>
+                <div class="notification-anime-list">
+            `;
+            
+            topResults.forEach((anime, index) => {
+                const title = anime.title || 'Unknown';
+                const type = anime.type || 'TV';
+                const score = anime.score ? `⭐ ${anime.score}` : '';
+                const info = [type, score].filter(x => x).join(' • ');
+                notificationHTML += `
+                    <div class="notification-anime-item">
+                        <span class="anime-number">${index + 1}.</span>
+                        <span class="anime-title">${title}</span>
+                        <span class="anime-time">${info}</span>
+                    </div>
+                `;
+            });
+            
+            if (data.length > 3) {
+                notificationHTML += `
+                    <div class="notification-more">
+                        +${data.length - 3} hasil pencarian lainnya
+                    </div>
+                `;
+            }
+            
+            notificationHTML += `</div>`;
+            showNotification(notificationHTML, 'success', true);
+        } else {
+            showNotification(`🔍 Tidak ada hasil untuk "${keyword}"`, 'warning');
+        }
     } catch (error) {
         displayError('Gagal mencari anime. Silakan coba lagi.');
     }
@@ -702,8 +920,38 @@ async function fetchGenres() {
         displayGenreList(filteredGenres);
         document.getElementById('content').innerHTML = '';
         document.getElementById('paginationContainer').style.display = 'none';
+        
         const cacheMsg = data.cached ? ' (dari cache)' : '';
-        showNotification(`✅ ${allGenres.length} genre tersedia${cacheMsg}`, 'success');
+        const topGenres = allGenres.slice(0, 5);
+        let notificationHTML = `
+            <div class="notification-header">
+                <strong>🎭 DAFTAR GENRE ANIME</strong>
+                <span class="anime-count-badge">${allGenres.length} Genre</span>
+            </div>
+            <div class="notification-anime-list">
+        `;
+        
+        topGenres.forEach((genre, index) => {
+            const emoji = getGenreEmoji(genre.name) || '🎬';
+            notificationHTML += `
+                <div class="notification-anime-item">
+                    <span class="anime-number">${emoji}</span>
+                    <span class="anime-title">${genre.name}</span>
+                    <span class="anime-time">ID: ${genre.mal_id}</span>
+                </div>
+            `;
+        });
+        
+        if (allGenres.length > 5) {
+            notificationHTML += `
+                <div class="notification-more">
+                    +${allGenres.length - 5} genre lainnya tersedia
+                </div>
+            `;
+        }
+        
+        notificationHTML += `</div>`;
+        showNotification(notificationHTML, 'success', true);
         setupGenreSearch();
     } catch (error) {
         console.error('Error fetching genres:', error);
