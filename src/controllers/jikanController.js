@@ -98,8 +98,8 @@ export const getSchedule = async (req, res) => {
             const pageData = response.data.data
               .filter(anime => anime.broadcast && anime.broadcast.day && anime.broadcast.time)
               .map(anime => {
-                const broadcastDay = anime.broadcast?.day || 'unknown';
-                const indonesianDay = dayMapping[broadcastDay.toLowerCase()] || 'Tidak Diketahui';
+                const broadcastDay = (anime.broadcast?.day || 'unknown').toLowerCase().replace(/s$/, '');
+                const indonesianDay = dayMapping[broadcastDay] || 'Tidak Diketahui';
                 
                 return {
                   mal_id: anime.mal_id,
@@ -150,8 +150,8 @@ export const getSchedule = async (req, res) => {
           
           if (response.data && response.data.data && response.data.data.length > 0) {
             const pageData = response.data.data.map(anime => {
-              const broadcastDay = anime.broadcast?.day || 'unknown';
-              const indonesianDay = dayMapping[broadcastDay.toLowerCase()] || 'Tidak Diketahui';
+              const broadcastDay = (anime.broadcast?.day || 'unknown').toLowerCase().replace(/s$/, '');
+              const indonesianDay = dayMapping[broadcastDay] || 'Tidak Diketahui';
               
               return {
                 mal_id: anime.mal_id,
@@ -199,22 +199,15 @@ export const getSchedule = async (req, res) => {
       return timeA.localeCompare(timeB);
     });
 
-    const pageNum = parseInt(page);
-    const itemsPerPage = 100;
-    const startIdx = (pageNum - 1) * itemsPerPage;
-    const endIdx = startIdx + itemsPerPage;
-    const paginatedData = allScheduleData.slice(startIdx, endIdx);
-    const totalPages = Math.ceil(allScheduleData.length / itemsPerPage);
-
     const result = {
-      data: paginatedData,
+      data: allScheduleData,
       pagination: {
-        currentPage: pageNum,
-        totalPages: totalPages,
+        currentPage: 1,
+        totalPages: 1,
         totalItems: allScheduleData.length,
-        itemsPerPage: itemsPerPage,
-        hasNextPage: pageNum < totalPages,
-        hasPrevPage: pageNum > 1
+        itemsPerPage: allScheduleData.length,
+        hasNextPage: false,
+        hasPrevPage: false
       }
     };
 
