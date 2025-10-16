@@ -271,6 +271,7 @@ export const getTypeStatistics = async (req, res) => {
       OVA: 0,
       MOVIE: 0,
       SPECIAL: 0,
+      SCHEDULE: 0,
       TOTAL: allAnime.length
     };
     
@@ -278,6 +279,10 @@ export const getTypeStatistics = async (req, res) => {
       const type = anime.type?.toUpperCase();
       if (statistics.hasOwnProperty(type)) {
         statistics[type]++;
+      }
+      
+      if (anime.broadcast && anime.broadcast.day && anime.broadcast.time) {
+        statistics.SCHEDULE++;
       }
     });
 

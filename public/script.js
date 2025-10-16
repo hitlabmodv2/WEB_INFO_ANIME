@@ -1415,10 +1415,11 @@ async function fetchAndDisplayTypeStatistics() {
             'ONA': '🌐',
             'OVA': '💿',
             'MOVIE': '🎬',
-            'SPECIAL': '⭐'
+            'SPECIAL': '⭐',
+            'SCHEDULE': '📅'
         };
         
-        const typeOrder = ['TV', 'ONA', 'OVA', 'MOVIE', 'SPECIAL'];
+        const typeOrder = ['TV', 'ONA', 'OVA', 'MOVIE', 'SPECIAL', 'SCHEDULE'];
         const totalAnime = stats.TOTAL || 0;
         
         let html = '';
