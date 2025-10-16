@@ -1073,6 +1073,101 @@ export const getGenres = async (req, res) => {
   }
 };
 
+export const getMALAnimeByType = async (req, res) => {
+  try {
+    const { type, page = 1 } = req.query;
+    
+    const typeMapping = {
+      'tv': 1,
+      'ova': 2,
+      'movie': 3,
+      'special': 4,
+      'ona': 5,
+      'music': 6
+    };
+    
+    const typeId = typeMapping[type?.toLowerCase()] || 1;
+    const show = (parseInt(page) - 1) * 50;
+    
+    const url = `https://myanimelist.net/anime.php?type=${typeId}&show=${show}`;
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5'
+      }
+    });
+    
+    const html = response.data;
+    const $ = load(html);
+    
+    const animeList = [];
+    
+    $('tr.ranking-list').each((index, element) => {
+      try {
+        const titleLink = $(element).find('.hoverinfo_trigger a');
+        const title = titleLink.text().trim();
+        const animeUrl = titleLink.attr('href');
+        const malId = animeUrl ? animeUrl.match(/\/anime\/(\d+)\//)?.[1] : null;
+        
+        const imageDiv = $(element).find('.picSurround img');
+        let image = imageDiv.attr('data-src') || imageDiv.attr('src');
+        if (image && image.includes('/r/50x70/')) {
+          image = image.replace('/r/50x70/', '/images/');
+        }
+        
+        const infoDiv = $(element).find('.information');
+        const infoText = infoDiv.text().trim();
+        
+        const episodesMatch = infoText.match(/(\d+)\s+eps/);
+        const episodes = episodesMatch ? parseInt(episodesMatch[1]) : null;
+        
+        const scoreText = $(element).find('.score-label').text().trim();
+        const score = scoreText !== 'N/A' ? parseFloat(scoreText) : null;
+        
+        const membersText = $(element).find('.member').text().trim().replace(/,/g, '');
+        const members = parseInt(membersText) || 0;
+        
+        if (title && malId) {
+          animeList.push({
+            mal_id: parseInt(malId),
+            title: title,
+            image: image || 'https://via.placeholder.com/225x350?text=No+Image',
+            type: type?.toUpperCase() || 'TV',
+            score: score,
+            episodes: episodes,
+            members: members,
+            url: `https://myanimelist.net${animeUrl}`
+          });
+        }
+      } catch (err) {
+        console.error('Error parsing anime item:', err.message);
+      }
+    });
+    
+    const hasNextPage = animeList.length >= 50;
+    
+    res.json({
+      data: animeList,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: hasNextPage ? parseInt(page) + 1 : parseInt(page),
+        totalItems: animeList.length,
+        itemsPerPage: 50,
+        hasNextPage: hasNextPage,
+        hasPrevPage: parseInt(page) > 1
+      }
+    });
+  } catch (error) {
+    console.error('MyAnimeList Type Scraping Error:', error.message);
+    res.status(500).json({ 
+      success: false,
+      error: 'Gagal mengambil anime berdasarkan type dari MyAnimeList',
+      details: error.message
+    });
+  }
+};
+
 export const getAnimeByGenre = async (req, res) => {
   try {
     const { genreId } = req.params;

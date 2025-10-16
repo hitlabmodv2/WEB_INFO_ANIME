@@ -313,9 +313,14 @@ async function fetchNew(page = 1) {
         if (isLoading) return;
         isLoading = true;
         
-        let url = `${API_BASE}/new?page=${page}`;
-        if (currentType && currentType !== '') {
-            url += `&type=${currentType}`;
+        let url;
+        if (currentType && ['ona', 'ova', 'movie', 'special'].includes(currentType.toLowerCase())) {
+            url = `${API_BASE}/mal-by-type?type=${currentType}&page=${page}`;
+        } else {
+            url = `${API_BASE}/new?page=${page}`;
+            if (currentType && currentType !== '') {
+                url += `&type=${currentType}`;
+            }
         }
         const response = await fetch(url);
         const result = await response.json();
@@ -375,9 +380,14 @@ async function fetchPopular(page = 1) {
         if (isLoading) return;
         isLoading = true;
         
-        let url = `${API_BASE}/popular?page=${page}`;
-        if (currentType && currentType !== '') {
-            url += `&type=${currentType}`;
+        let url;
+        if (currentType && ['ona', 'ova', 'movie', 'special'].includes(currentType.toLowerCase())) {
+            url = `${API_BASE}/mal-by-type?type=${currentType}&page=${page}`;
+        } else {
+            url = `${API_BASE}/popular?page=${page}`;
+            if (currentType && currentType !== '') {
+                url += `&type=${currentType}`;
+            }
         }
         const response = await fetch(url);
         const result = await response.json();
@@ -610,9 +620,14 @@ async function fetchAiring(page = 1) {
         if (isLoading) return;
         isLoading = true;
         
-        let url = `${API_BASE}/airing?page=${page}`;
-        if (currentType && currentType !== '') {
-            url += `&type=${currentType}`;
+        let url;
+        if (currentType && ['ona', 'ova', 'movie', 'special'].includes(currentType.toLowerCase())) {
+            url = `${API_BASE}/mal-by-type?type=${currentType}&page=${page}`;
+        } else {
+            url = `${API_BASE}/airing?page=${page}`;
+            if (currentType && currentType !== '') {
+                url += `&type=${currentType}`;
+            }
         }
         const response = await fetch(url);
         const result = await response.json();
@@ -800,9 +815,14 @@ async function fetchSeasonAnime(year, season, page = 1) {
         
         currentSeasonData = { year, season, page };
         
-        let url = `${API_BASE}/season?year=${year}&season=${season}&page=${page}`;
-        if (currentType && currentType !== '') {
-            url += `&type=${currentType}`;
+        let url;
+        if (currentType && ['ona', 'ova', 'movie', 'special'].includes(currentType.toLowerCase())) {
+            url = `${API_BASE}/mal-by-type?type=${currentType}&page=${page}`;
+        } else {
+            url = `${API_BASE}/season?year=${year}&season=${season}&page=${page}`;
+            if (currentType && currentType !== '') {
+                url += `&type=${currentType}`;
+            }
         }
         const response = await fetch(url);
         const result = await response.json();

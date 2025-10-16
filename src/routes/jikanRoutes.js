@@ -20,7 +20,8 @@ import {
   getUserProfileRecommendations,
   getTypeStatistics,
   getGenres,
-  getAnimeByGenre
+  getAnimeByGenre,
+  getMALAnimeByType
 } from '../controllers/jikanController.js';
 
 const router = express.Router();
@@ -31,6 +32,7 @@ router.get('/airing', getCurrentlyAiring);
 router.get('/new', getCurrentSeason);
 router.get('/season', getSeasonalAnime);
 router.get('/popular', getPopular);
+router.get('/mal-by-type', getMALAnimeByType);
 router.get('/search/:keyword', searchAnime);
 router.get('/detail/:id', getAnimeDetail);
 router.get('/characters/:id', getCharacters);
