@@ -17,10 +17,10 @@ let genreAnimeCacheTimestamp = {};
 const GENRE_ANIME_CACHE_DURATION = 10 * 60 * 1000;
 
 let scheduleCache = {};
-const SCHEDULE_CACHE_DURATION = 5 * 60 * 1000;
+const SCHEDULE_CACHE_DURATION = 10 * 60 * 1000;
 
 let lastRequestTime = 0;
-const MIN_REQUEST_DELAY = 1000;
+const MIN_REQUEST_DELAY = 2000;
 
 async function delayIfNeeded() {
   const now = Date.now();
@@ -132,7 +132,9 @@ export const getSchedule = async (req, res) => {
     } else {
       let currentPage = 1;
       let hasNextPage = true;
-      const maxPages = 10;
+      const maxPages = 20;
+      let retryCount = 0;
+      const maxRetries = 3;
       
       while (hasNextPage && currentPage <= maxPages) {
         try {
@@ -173,12 +175,24 @@ export const getSchedule = async (req, res) => {
             
             hasNextPage = response.data.pagination?.has_next_page || false;
             currentPage++;
+            retryCount = 0;
           } else {
             hasNextPage = false;
           }
         } catch (pageError) {
-          console.error(`Error fetching schedule page ${currentPage}:`, pageError.message);
-          hasNextPage = false;
+          if (pageError.response?.status === 429 && retryCount < maxRetries) {
+            console.log(`Rate limit hit on page ${currentPage}, waiting 5s before retry ${retryCount + 1}/${maxRetries}...`);
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            retryCount++;
+          } else {
+            console.error(`Error fetching schedule page ${currentPage}:`, pageError.message);
+            if (currentPage === 1) {
+              hasNextPage = false;
+            } else {
+              currentPage++;
+              retryCount = 0;
+            }
+          }
         }
       }
       

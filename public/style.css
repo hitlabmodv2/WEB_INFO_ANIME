@@ -1099,30 +1099,69 @@ footer p {
 }
 
 .powered-by .greeting {
-    color: #666;
-    font-size: 0.7em;
-    font-weight: 500;
-    margin: 3px 0;
+    color: #333;
+    font-size: 0.75em;
+    font-weight: 600;
+    margin: 5px 0;
 }
 
 .powered-by .datetime {
-    color: #666;
-    font-size: 0.65em;
+    color: #444;
+    font-size: 0.7em;
     margin: 3px 0;
     font-family: 'Segoe UI', sans-serif;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 .powered-by .credit {
-    color: #666;
-    font-size: 0.65em;
+    color: #333;
+    font-size: 0.7em;
+    margin: 3px 0;
+    font-weight: 500;
+}
+
+.powered-by .developer {
+    color: #444;
+    font-size: 0.7em;
     margin: 3px 0;
     font-weight: 400;
+}
+
+.powered-by .brand {
+    color: #667eea;
+    font-weight: 700;
 }
 
 .powered-by .creator {
     color: #667eea;
     font-weight: 600;
+}
+
+.visitor-stats {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 8px;
+    padding: 8px;
+    background: rgba(102, 126, 234, 0.08);
+    border-radius: 8px;
+}
+
+.visitor-stat-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7em;
+    color: #333;
+}
+
+.visitor-stat-item .stat-icon {
+    font-size: 1.1em;
+}
+
+.visitor-stat-item .stat-number {
+    font-weight: 700;
+    color: #667eea;
 }
 
 @media (min-width: 480px) {
@@ -3107,11 +3146,25 @@ body.dark-mode .powered-by {
 
 body.dark-mode .powered-by .greeting,
 body.dark-mode .powered-by .datetime,
-body.dark-mode .powered-by .credit {
-    color: #9ca3af;
+body.dark-mode .powered-by .credit,
+body.dark-mode .powered-by .developer {
+    color: #d1d5db;
 }
 
+body.dark-mode .powered-by .brand,
 body.dark-mode .powered-by .creator {
+    color: #a5b4fc;
+}
+
+body.dark-mode .visitor-stats {
+    background: rgba(165, 180, 252, 0.1);
+}
+
+body.dark-mode .visitor-stat-item {
+    color: #d1d5db;
+}
+
+body.dark-mode .visitor-stat-item .stat-number {
     color: #a5b4fc;
 }
 
