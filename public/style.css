@@ -1140,28 +1140,39 @@ footer p {
 .visitor-stats {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
     margin-top: 8px;
     padding: 8px;
     background: rgba(102, 126, 234, 0.08);
     border-radius: 8px;
+    flex-wrap: wrap;
 }
 
 .visitor-stat-item {
     display: flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.7em;
+    gap: 5px;
+    font-size: 0.65em;
     color: #333;
 }
 
 .visitor-stat-item .stat-icon {
-    font-size: 1.1em;
+    font-size: 1.2em;
 }
 
 .visitor-stat-item .stat-number {
     font-weight: 700;
     color: #667eea;
+}
+
+@media (min-width: 480px) {
+    .visitor-stats {
+        gap: 20px;
+    }
+    
+    .visitor-stat-item {
+        font-size: 0.7em;
+    }
 }
 
 @media (min-width: 480px) {

@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import jikanRoutes from "./routes/jikanRoutes.js";
 import apiRoutes from "./routes/apiRoutes.js";
+import visitorRoutes from "./routes/visitorRoutes.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +23,7 @@ app.use(express.static(path.join(__dirname, "../public"), {
 
 app.use("/api", jikanRoutes);
 app.use("/api", apiRoutes);
+app.use("/api/visitors", visitorRoutes);
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/index.html"));

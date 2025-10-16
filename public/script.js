@@ -2221,3 +2221,82 @@ if (document.getElementById('content')) {
     startAutoUpdate();
 }
 initializePoweredBy();
+
+function getSessionId() {
+    let sessionId = localStorage.getItem('visitor-session-id');
+    if (!sessionId) {
+        sessionId = 'session-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('visitor-session-id', sessionId);
+    }
+    return sessionId;
+}
+
+async function trackVisitor() {
+    try {
+        const sessionId = getSessionId();
+        const response = await fetch(`${API_BASE}/visitors/track`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Session-ID': sessionId
+            }
+        });
+        
+        const data = await response.json();
+        updateVisitorDisplay(data);
+    } catch (error) {
+        console.error('Failed to track visitor:', error);
+    }
+}
+
+async function updateVisitorStats() {
+    try {
+        const response = await fetch(`${API_BASE}/visitors/stats`);
+        const data = await response.json();
+        updateVisitorDisplay(data);
+    } catch (error) {
+        console.error('Failed to update visitor stats:', error);
+    }
+}
+
+async function sendHeartbeat() {
+    try {
+        const sessionId = getSessionId();
+        const response = await fetch(`${API_BASE}/visitors/heartbeat`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Session-ID': sessionId
+            }
+        });
+        
+        const data = await response.json();
+        updateVisitorDisplay(data);
+    } catch (error) {
+        console.error('Failed to send heartbeat:', error);
+    }
+}
+
+function updateVisitorDisplay(data) {
+    const totalEl = document.getElementById('totalVisitors');
+    const onlineEl = document.getElementById('onlineVisitors');
+    const viewsEl = document.getElementById('pageViews');
+    
+    if (totalEl && data.totalVisitors !== undefined) {
+        totalEl.textContent = data.totalVisitors.toLocaleString();
+    }
+    
+    if (onlineEl && data.onlineVisitors !== undefined) {
+        onlineEl.textContent = data.onlineVisitors.toLocaleString();
+    }
+    
+    if (viewsEl && data.pageViews !== undefined) {
+        viewsEl.textContent = data.pageViews.toLocaleString();
+    }
+}
+
+trackVisitor();
+
+setInterval(sendHeartbeat, 2 * 60 * 1000);
+
+setInterval(updateVisitorStats, 30 * 1000);
