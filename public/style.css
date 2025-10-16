@@ -416,6 +416,13 @@ header {
     text-overflow: ellipsis;
     white-space: nowrap;
     letter-spacing: 0.2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.anime-title:hover {
+    color: #667eea;
+    text-decoration: underline;
 }
 
 .anime-time {
@@ -2889,6 +2896,10 @@ body.dark-mode .notification-anime-item:hover {
 body.dark-mode .anime-number,
 body.dark-mode .anime-title {
     color: #a3d9a5;
+}
+
+body.dark-mode .anime-title:hover {
+    color: #667eea;
 }
 
 body.dark-mode .anime-time {

@@ -182,7 +182,7 @@ export const getCurrentSeason = async (req, res) => {
     };
     
     if (type && type !== 'all' && type !== '') {
-      params.filter = type.toLowerCase();
+      params.type = type.toLowerCase();
     }
     
     const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
@@ -300,7 +300,7 @@ export const getSeasonalAnime = async (req, res) => {
     };
     
     if (type && type !== 'all' && type !== '') {
-      params.filter = type.toLowerCase();
+      params.type = type.toLowerCase();
     }
 
     let url = `${JIKAN_BASE}/seasons/now`;
@@ -401,7 +401,7 @@ export const getCurrentlyAiring = async (req, res) => {
     };
     
     if (type && type !== 'all' && type !== '') {
-      params.filter = type.toLowerCase();
+      params.type = type.toLowerCase();
     }
     
     const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
@@ -454,7 +454,7 @@ export const getPopular = async (req, res) => {
     };
     
     if (type && type !== 'all' && type !== '') {
-      params.type = type;
+      params.type = type.toLowerCase();
     }
     
     const response = await axios.get(`${JIKAN_BASE}/top/anime`, { params });

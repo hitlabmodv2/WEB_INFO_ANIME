@@ -268,10 +268,11 @@ async function fetchSchedule(page = 1, delayNotification = false) {
                 
                 todaySchedule.slice(0, 5).forEach((anime, index) => {
                     const time = anime.time || 'TBA';
+                    const animeId = anime.mal_id || anime.id || 0;
                     notificationHTML += `
                         <div class="notification-anime-item">
                             <span class="anime-number">${index + 1}.</span>
-                            <span class="anime-title">${anime.title}</span>
+                            <span class="anime-title" onclick="navigateToDetail(${animeId})">${anime.title}</span>
                             <span class="anime-time">⏰ ${time}</span>
                         </div>
                     `;
@@ -335,10 +336,11 @@ async function fetchNew(page = 1) {
                 const title = anime.title || 'Unknown';
                 const type = anime.type || 'TV';
                 const score = anime.score ? `⭐ ${anime.score}` : '🆕 NEW';
+                const animeId = anime.mal_id || anime.id || 0;
                 notificationHTML += `
                     <div class="notification-anime-item">
                         <span class="anime-number">${index + 1}.</span>
-                        <span class="anime-title">${title}</span>
+                        <span class="anime-title" onclick="navigateToDetail(${animeId})">${title}</span>
                         <span class="anime-time">${type} ${score}</span>
                     </div>
                 `;
@@ -397,10 +399,11 @@ async function fetchPopular(page = 1) {
                 const score = anime.score ? `⭐ ${anime.score}` : '';
                 const members = anime.members ? `👥 ${(anime.members / 1000).toFixed(0)}K` : '';
                 const info = [score, members].filter(x => x).join(' • ');
+                const animeId = anime.mal_id || anime.id || 0;
                 notificationHTML += `
                     <div class="notification-anime-item">
                         <span class="anime-number">${index + 1}.</span>
-                        <span class="anime-title">${title}</span>
+                        <span class="anime-title" onclick="navigateToDetail(${animeId})">${title}</span>
                         <span class="anime-time">${info}</span>
                     </div>
                 `;
@@ -480,11 +483,13 @@ async function fetchRecommendations(page = 1) {
             topRecs.forEach((rec, index) => {
                 const leftTitle = rec.leftAnime?.title || 'Unknown';
                 const rightTitle = rec.rightAnime?.title || 'Unknown';
+                const leftId = rec.leftAnime?.mal_id || 0;
+                const rightId = rec.rightAnime?.mal_id || 0;
                 const username = rec.user?.username || 'Anonymous';
                 notificationHTML += `
                     <div class="notification-anime-item">
                         <span class="anime-number">${index + 1}.</span>
-                        <span class="anime-title">${leftTitle} → ${rightTitle}</span>
+                        <span class="anime-title"><span onclick="navigateToDetail(${leftId})" style="cursor:pointer;">${leftTitle}</span> → <span onclick="navigateToDetail(${rightId})" style="cursor:pointer;">${rightTitle}</span></span>
                         <span class="anime-time">👤 ${username}</span>
                     </div>
                 `;
@@ -631,10 +636,11 @@ async function fetchAiring(page = 1) {
                     const title = anime.title || 'Unknown';
                     const time = anime.broadcast?.time || 'TBA';
                     const type = anime.type || 'TV';
+                    const animeId = anime.mal_id || anime.id || 0;
                     notificationHTML += `
                         <div class="notification-anime-item">
                             <span class="anime-number">${index + 1}.</span>
-                            <span class="anime-title">${title}</span>
+                            <span class="anime-title" onclick="navigateToDetail(${animeId})">${title}</span>
                             <span class="anime-time">${type} • ⏰ ${time}</span>
                         </div>
                     `;
@@ -663,10 +669,11 @@ async function fetchAiring(page = 1) {
                     const title = anime.title || 'Unknown';
                     const day = anime.broadcast?.day || 'TBA';
                     const time = anime.broadcast?.time || 'TBA';
+                    const animeId = anime.mal_id || anime.id || 0;
                     notificationHTML += `
                         <div class="notification-anime-item">
                             <span class="anime-number">${index + 1}.</span>
-                            <span class="anime-title">${title}</span>
+                            <span class="anime-title" onclick="navigateToDetail(${animeId})">${title}</span>
                             <span class="anime-time">📅 ${day} ${time}</span>
                         </div>
                     `;
@@ -825,10 +832,11 @@ async function fetchSeasonAnime(year, season, page = 1) {
                 const score = anime.score ? `⭐ ${anime.score}` : '';
                 const type = anime.type || 'TV';
                 const info = [type, score].filter(x => x).join(' • ');
+                const animeId = anime.mal_id || anime.id || 0;
                 notificationHTML += `
                     <div class="notification-anime-item">
                         <span class="anime-number">${index + 1}.</span>
-                        <span class="anime-title">${animeTitle}</span>
+                        <span class="anime-title" onclick="navigateToDetail(${animeId})">${animeTitle}</span>
                         <span class="anime-time">${info}</span>
                     </div>
                 `;
@@ -881,10 +889,11 @@ async function searchAnime(keyword) {
                 const type = anime.type || 'TV';
                 const score = anime.score ? `⭐ ${anime.score}` : '';
                 const info = [type, score].filter(x => x).join(' • ');
+                const animeId = anime.mal_id || anime.id || 0;
                 notificationHTML += `
                     <div class="notification-anime-item">
                         <span class="anime-number">${index + 1}.</span>
-                        <span class="anime-title">${title}</span>
+                        <span class="anime-title" onclick="navigateToDetail(${animeId})">${title}</span>
                         <span class="anime-time">${info}</span>
                     </div>
                 `;
