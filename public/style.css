@@ -3530,6 +3530,19 @@ body.dark-mode .developer-btn:hover {
     color: #000 !important;
 }
 
+body.dark-mode .menu-toggle {
+    background: rgba(45, 45, 68, 0.9) !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .menu-toggle span {
+    background: linear-gradient(135deg, #a5b4fc, #c4b5fd) !important;
+}
+
+body.dark-mode .menu-toggle:hover {
+    box-shadow: 0 6px 20px rgba(165, 180, 252, 0.4) !important;
+}
+
 /* Mobile Bottom Navigation Bar */
 .mobile-bottom-nav {
     display: none;
