@@ -1308,6 +1308,13 @@ function displayScheduleList(data, pagination = null) {
             `;
         } else {
             animes.sort((a, b) => {
+                const scoreA = parseFloat(a.score) || 0;
+                const scoreB = parseFloat(b.score) || 0;
+                
+                if (scoreB !== scoreA) {
+                    return scoreB - scoreA;
+                }
+                
                 const timeA = a.time || '99:99';
                 const timeB = b.time || '99:99';
                 return timeA.localeCompare(timeB);
@@ -1363,6 +1370,19 @@ function displayScheduleList(data, pagination = null) {
                 </div>
                 <div class="schedule-list">
         `;
+        
+        groupedByDay['Lainnya'].sort((a, b) => {
+            const scoreA = parseFloat(a.score) || 0;
+            const scoreB = parseFloat(b.score) || 0;
+            
+            if (scoreB !== scoreA) {
+                return scoreB - scoreA;
+            }
+            
+            const timeA = a.time || '99:99';
+            const timeB = b.time || '99:99';
+            return timeA.localeCompare(timeB);
+        });
         
         groupedByDay['Lainnya'].forEach(anime => {
             const animeId = anime.mal_id || anime.id || '';
