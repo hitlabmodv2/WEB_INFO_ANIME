@@ -258,6 +258,14 @@ header {
     margin-bottom: 5px;
 }
 
+.header-logo {
+    width: 45px;
+    height: 45px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    object-fit: cover;
+}
+
 .header-content h1 {
     color: #667eea;
     font-size: 1.5em;
