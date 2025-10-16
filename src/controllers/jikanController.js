@@ -74,62 +74,119 @@ export const getSchedule = async (req, res) => {
     };
 
     let allScheduleData = [];
-    let currentPage = 1;
-    let hasNextPage = true;
-    const maxPages = 10;
     
-    while (hasNextPage && currentPage <= maxPages) {
-      try {
-        if (currentPage > 1) {
-          await delayIfNeeded();
-        }
-        
-        const params = { page: currentPage };
-        
-        if (day) {
-          params.filter = day.toLowerCase();
-        }
-        
-        const response = await axios.get(`${JIKAN_BASE}/schedules`, { params });
-        
-        if (response.data && response.data.data && response.data.data.length > 0) {
-          const pageData = response.data.data.map(anime => {
-            const broadcastDay = anime.broadcast?.day || 'unknown';
-            const indonesianDay = dayMapping[broadcastDay.toLowerCase()] || 'Tidak Diketahui';
+    if (type && ['ona', 'ova', 'movie', 'special'].includes(type.toLowerCase())) {
+      let currentPage = 1;
+      let hasNextPage = true;
+      const maxPages = 5;
+      
+      while (hasNextPage && currentPage <= maxPages) {
+        try {
+          if (currentPage > 1) {
+            await delayIfNeeded();
+          }
+          
+          const params = { 
+            page: currentPage,
+            limit: 25,
+            type: type.toLowerCase()
+          };
+          
+          const response = await axios.get(`${JIKAN_BASE}/seasons/now`, { params });
+          
+          if (response.data && response.data.data && response.data.data.length > 0) {
+            const pageData = response.data.data
+              .filter(anime => anime.broadcast && anime.broadcast.day && anime.broadcast.time)
+              .map(anime => {
+                const broadcastDay = anime.broadcast?.day || 'unknown';
+                const indonesianDay = dayMapping[broadcastDay.toLowerCase()] || 'Tidak Diketahui';
+                
+                return {
+                  mal_id: anime.mal_id,
+                  title: anime.title,
+                  image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+                  day: indonesianDay,
+                  time: anime.broadcast?.time || 'TBA',
+                  aired: anime.aired?.string || 'TBA',
+                  airedFrom: anime.aired?.from || null,
+                  episode: `Episodes: ${anime.episodes || '?'}`,
+                  score: anime.score,
+                  type: anime.type,
+                  status: anime.status,
+                  broadcast: anime.broadcast
+                };
+              });
             
-            return {
-              mal_id: anime.mal_id,
-              title: anime.title,
-              image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
-              day: indonesianDay,
-              time: anime.broadcast?.time || 'TBA',
-              aired: anime.aired?.string || 'TBA',
-              airedFrom: anime.aired?.from || null,
-              episode: `Episodes: ${anime.episodes || '?'}`,
-              score: anime.score,
-              type: anime.type,
-              status: anime.status,
-              broadcast: anime.broadcast
-            };
-          });
-          
-          allScheduleData = allScheduleData.concat(pageData);
-          
-          hasNextPage = response.data.pagination?.has_next_page || false;
-          currentPage++;
-        } else {
+            allScheduleData = allScheduleData.concat(pageData);
+            
+            hasNextPage = response.data.pagination?.has_next_page || false;
+            currentPage++;
+          } else {
+            hasNextPage = false;
+          }
+        } catch (pageError) {
+          console.error(`Error fetching ${type} page ${currentPage}:`, pageError.message);
           hasNextPage = false;
         }
-      } catch (pageError) {
-        console.error(`Error fetching schedule page ${currentPage}:`, pageError.message);
-        hasNextPage = false;
       }
-    }
-    
-    if (type && type !== 'all' && type !== '') {
-      allScheduleData = allScheduleData.filter(anime => 
-        anime.type && anime.type.toLowerCase() === type.toLowerCase()
-      );
+    } else {
+      let currentPage = 1;
+      let hasNextPage = true;
+      const maxPages = 10;
+      
+      while (hasNextPage && currentPage <= maxPages) {
+        try {
+          if (currentPage > 1) {
+            await delayIfNeeded();
+          }
+          
+          const params = { page: currentPage };
+          
+          if (day) {
+            params.filter = day.toLowerCase();
+          }
+          
+          const response = await axios.get(`${JIKAN_BASE}/schedules`, { params });
+          
+          if (response.data && response.data.data && response.data.data.length > 0) {
+            const pageData = response.data.data.map(anime => {
+              const broadcastDay = anime.broadcast?.day || 'unknown';
+              const indonesianDay = dayMapping[broadcastDay.toLowerCase()] || 'Tidak Diketahui';
+              
+              return {
+                mal_id: anime.mal_id,
+                title: anime.title,
+                image: anime.images?.jpg?.large_image_url || anime.images?.jpg?.image_url,
+                day: indonesianDay,
+                time: anime.broadcast?.time || 'TBA',
+                aired: anime.aired?.string || 'TBA',
+                airedFrom: anime.aired?.from || null,
+                episode: `Episodes: ${anime.episodes || '?'}`,
+                score: anime.score,
+                type: anime.type,
+                status: anime.status,
+                broadcast: anime.broadcast
+              };
+            });
+            
+            allScheduleData = allScheduleData.concat(pageData);
+            
+            hasNextPage = response.data.pagination?.has_next_page || false;
+            currentPage++;
+          } else {
+            hasNextPage = false;
+          }
+        } catch (pageError) {
+          console.error(`Error fetching schedule page ${currentPage}:`, pageError.message);
+          hasNextPage = false;
+        }
+      }
+      
+      if (type && type !== 'all' && type !== '' && type.toLowerCase() === 'tv') {
+        allScheduleData = allScheduleData.filter(anime => 
+          anime.type && anime.type.toLowerCase() === 'tv'
+        );
+      }
     }
 
     allScheduleData.sort((a, b) => {

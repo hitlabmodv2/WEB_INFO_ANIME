@@ -289,12 +289,18 @@ async function fetchSchedule(page = 1, delayNotification = false) {
                 notificationHTML += `</div>`;
                 showNotification(notificationHTML, 'success', true);
             } else {
-                showNotification(`📅 Total ${result.pagination.totalItems} anime terjadwal`, 'info');
+                const typeLabel = currentType ? currentType.toUpperCase() : 'Anime';
+                showNotification(`📅 Total ${result.pagination.totalItems} ${typeLabel} terjadwal`, 'info');
             }
             
             hasMoreData = result.pagination.hasNextPage;
         } else {
-            showNotification('⚠️ Belum ada jadwal anime tersedia', 'warning');
+            const specialTypes = ['ona', 'ova', 'movie', 'special'];
+            if (currentType && specialTypes.includes(currentType.toLowerCase())) {
+                showNotification(`ℹ️ ${currentType.toUpperCase()} biasanya tidak memiliki jadwal tayang mingguan yang teratur seperti TV series`, 'info');
+            } else {
+                showNotification('⚠️ Belum ada jadwal anime tersedia', 'warning');
+            }
             hasMoreData = false;
         }
         
