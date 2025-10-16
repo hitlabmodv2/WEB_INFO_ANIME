@@ -87,6 +87,9 @@ function setBackgroundByTime() {
   if (period !== lastPeriod) {
     lastPeriod = period;
     lastImageIndex = null;
+    
+    document.body.classList.remove('time-pagi', 'time-siang', 'time-sore', 'time-malam');
+    document.body.classList.add(`time-${period}`);
   }
   
   lastHour = hour;
