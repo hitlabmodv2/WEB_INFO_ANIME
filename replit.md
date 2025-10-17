@@ -4,20 +4,29 @@
 
 # Recent Changes
 
-## October 17, 2025 - Profile & Mobile UX Improvements
+## October 17, 2025 - Mobile UX & Video Player Improvements
 
 1. **Profile Page Navigation Fix**:
    - Added `safeNavigateBack()` function to prevent stuck navigation on profile.html
    - Automatically redirects to home page if no navigation history exists
    - Handles external link scenarios and direct URL access gracefully
 
-2. **Mobile Header Layout Fix**:
-   - Fixed overlap issue between back button and anime title on mobile devices
-   - Added responsive padding (40-50px) to h1 elements to accommodate back button
+2. **Mobile Header Layout Fix (Detail & Profile Pages)**:
+   - **Detail.css**: Fixed overlap between back button and anime title on mobile
+   - Added responsive padding (40-50px) to #animeTitle for mobile devices
    - Implemented breakpoint-specific font sizes (1.1em @ 480px, 1.2em @ 640px)
-   - Enhanced line-height for better readability on small screens
+   - Back button positioned absolutely with proper z-index
+   - **Profile.html**: Added mobile-specific styling for back button and header
+   - Reduced padding and font sizes for better mobile fit (480px and 640px breakpoints)
 
-3. **Indonesian Documentation**:
+3. **Video Player Fix**:
+   - Fixed video playback issue where videos couldn't play
+   - Added support for `embed_url` as fallback when `url` is null from Jikan API
+   - Updated regex patterns to support youtube-nocookie.com embed URLs
+   - Added comprehensive error handling with console logging for debugging
+   - Videos now properly extract YouTube ID from various URL formats
+
+4. **Indonesian Documentation**:
    - Added comprehensive Indonesian comments to profile.js
    - Documented URL parameter system (profile.html?username=XXX)
    - Explained data flow from URL → API → Display

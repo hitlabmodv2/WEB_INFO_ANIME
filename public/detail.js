@@ -313,14 +313,44 @@ async function loadEpisodes() {
 
 function getYouTubeVideoId(url) {
     if (!url) return null;
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : null;
+    
+    // Support berbagai format URL YouTube termasuk embed URL dari Jikan
+    const patterns = [
+        /youtube-nocookie\.com\/embed\/([a-zA-Z0-9_-]{11})/,  // youtube-nocookie embed
+        /youtube\.com\/embed\/([a-zA-Z0-9_-]{11})/,           // youtube embed
+        /youtube\.com\/watch\?v=([a-zA-Z0-9_-]{11})/,         // youtube watch
+        /youtube\.com\/watch\?.*v=([a-zA-Z0-9_-]{11})/,       // youtube watch dengan params lain
+        /youtu\.be\/([a-zA-Z0-9_-]{11})/,                     // youtu.be short link
+        /youtube\.com\/v\/([a-zA-Z0-9_-]{11})/                // youtube /v/
+    ];
+    
+    for (const pattern of patterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+    
+    return null;
 }
 
 function openVideoModal(videoUrl, title) {
+    console.log('Opening video modal with URL:', videoUrl);
+    
+    if (!videoUrl || videoUrl === '') {
+        console.error('No video URL provided');
+        alert('Video tidak tersedia');
+        return;
+    }
+    
     const videoId = getYouTubeVideoId(videoUrl);
-    if (!videoId) return;
+    console.log('Extracted YouTube video ID:', videoId);
+    
+    if (!videoId) {
+        console.error('Failed to extract YouTube video ID from URL:', videoUrl);
+        alert('Format video tidak didukung. Hanya YouTube yang didukung.');
+        return;
+    }
     
     const modal = document.getElementById('videoModal');
     const iframe = document.getElementById('videoPlayer');
@@ -474,13 +504,39 @@ async function loadVideos() {
 
         const html = `
             <div class="video-grid">
-                ${allVideos.slice(0, 12).map(video => `
-                    <div class="video-card" onclick='openVideoModal("${video.trailer?.url || ''}", "${(video.title || 'No Title').replace(/'/g, "\\'")}");' style="cursor:pointer;">
+                ${allVideos.slice(0, 12).map(video => {
+                    // Ambil URL dari berbagai sumber yang tersedia
+                    const videoUrl = video.trailer?.url || 
+                                    video.trailer?.embed_url || 
+                                    video.url || 
+                                    video.embed_url || '';
+                    
+                    // Generate thumbnail dari YouTube ID jika image tidak tersedia
+                    let videoImage = video.trailer?.images?.maximum_image_url || 
+                                    video.trailer?.images?.image_url || 
+                                    video.images?.maximum_image_url || 
+                                    video.images?.image_url;
+                    
+                    // Jika tidak ada image, generate dari YouTube ID
+                    if (!videoImage && videoUrl) {
+                        const youtubeId = getYouTubeVideoId(videoUrl);
+                        if (youtubeId) {
+                            videoImage = `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg`;
+                        }
+                    }
+                    
+                    // Fallback ke placeholder jika masih tidak ada
+                    if (!videoImage) {
+                        videoImage = 'https://via.placeholder.com/320x180?text=Video';
+                    }
+                    
+                    return `
+                    <div class="video-card" onclick='openVideoModal("${videoUrl}", "${(video.title || 'No Title').replace(/'/g, "\\'")}");' style="cursor:pointer;">
                         <div style="position:relative;">
-                            <img src="${video.trailer?.images?.maximum_image_url || video.trailer?.images?.image_url || 'https://via.placeholder.com/320x180?text=Video'}" 
+                            <img src="${videoImage}" 
                                  alt="${video.title}" 
                                  class="video-thumbnail"
-                                 onerror="this.src='https://via.placeholder.com/320x180?text=Video'">
+                                 onerror="this.src='https://img.youtube.com/vi/${getYouTubeVideoId(videoUrl) || ''}/hqdefault.jpg'; if(this.src.includes('hqdefault') && this.complete && !this.naturalHeight) this.src='https://via.placeholder.com/320x180?text=Video';">
                             <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.7); border-radius:50%; width:50px; height:50px; display:flex; align-items:center; justify-content:center;">
                                 <div style="width:0; height:0; border-left:15px solid white; border-top:10px solid transparent; border-bottom:10px solid transparent; margin-left:3px;"></div>
                             </div>
@@ -488,11 +544,11 @@ async function loadVideos() {
                         <div class="video-info">
                             <div class="video-title">${video.title || 'No Title'}</div>
                             <div style="font-size:0.8em; color:#666; margin-top:5px;">${video.type}</div>
-                            ${video.trailer?.url ? 
+                            ${videoUrl ? 
                                 `<div style="color:#667eea; font-size:0.85em; margin-top:5px; font-weight:600;">▶ Putar Video</div>` : ''}
                         </div>
                     </div>
-                `).join('')}
+                `}).join('')}
             </div>
         `;
 

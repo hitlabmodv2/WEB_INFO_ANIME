@@ -45,6 +45,10 @@ app.get("/genre.html", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/genre.html"));
 });
 
+app.get("/developer.html", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/developer.html"));
+});
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on http://0.0.0.0:${PORT}`);
   console.log(`📡 Using Jikan API (MyAnimeList) for anime data`);
