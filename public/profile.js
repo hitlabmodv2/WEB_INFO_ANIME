@@ -1,3 +1,26 @@
+/**
+ * SISTEM PROFIL USER - PENJELASAN LENGKAP
+ * 
+ * Halaman ini menampilkan profil user dari MyAnimeList berdasarkan username.
+ * 
+ * CARA KERJA URL PARAMETER:
+ * - URL: profile.html?username=NamaUser
+ * - Parameter "username" di URL akan diambil dan digunakan untuk fetch data profil
+ * - Contoh: profile.html?username=Nekomata1037
+ * 
+ * ALUR KERJA:
+ * 1. Halaman dibuka dengan parameter username di URL
+ * 2. JavaScript membaca parameter username dari URL menggunakan URLSearchParams
+ * 3. Jika username ada, fetch data profil dari API: /api/user-profile/{username}
+ * 4. Data profil ditampilkan (avatar, stats anime, favorites, recommendations)
+ * 5. Jika username tidak ada, tampilkan pesan error
+ * 
+ * TOMBOL KEMBALI:
+ * - Menggunakan fungsi safeNavigateBack() untuk navigasi yang aman
+ * - Jika ada history halaman sebelumnya → kembali ke halaman tersebut
+ * - Jika tidak ada history (user langsung buka URL) → kembali ke halaman utama
+ */
+
 const API_BASE = '/api';
 
 function showPageTransition() {
@@ -111,11 +134,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
 });
 
+/**
+ * FUNGSI: Mengambil parameter dari URL
+ * 
+ * Cara kerja:
+ * - Membaca semua parameter dari URL menggunakan URLSearchParams
+ * - Mengambil nilai parameter tertentu berdasarkan nama
+ * 
+ * Contoh penggunaan:
+ * - URL: profile.html?username=Nekomata1037
+ * - getQueryParam('username') akan return "Nekomata1037"
+ * - getQueryParam('id') akan return null (karena tidak ada parameter 'id')
+ */
 function getQueryParam(param) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
 
+/**
+ * FUNGSI: Mengambil data profil user dari API
+ * 
+ * Parameter:
+ * - username: Username dari MyAnimeList yang ingin ditampilkan
+ * 
+ * Cara kerja:
+ * 1. Tampilkan loading indicator
+ * 2. Kirim request ke API: /api/user-profile/{username}
+ * 3. Jika berhasil dan data ada:
+ *    - Panggil fungsi displayProfile() untuk menampilkan data
+ *    - Tampilkan konten profil
+ * 4. Jika gagal atau user tidak ditemukan:
+ *    - Tampilkan pesan error "User tidak ditemukan"
+ * 5. Sembunyikan loading indicator
+ * 
+ * Catatan:
+ * - encodeURIComponent() digunakan untuk encode username agar aman di URL
+ * - Error handling untuk menangani masalah koneksi atau server error
+ */
 async function fetchUserProfile(username) {
     try {
         const loading = document.getElementById('loading');
@@ -159,6 +214,25 @@ async function fetchUserRecommendations(username) {
     }
 }
 
+/**
+ * FUNGSI: Menampilkan data profil user ke halaman
+ * 
+ * Parameter:
+ * - profile: Object berisi data profil user dari API
+ * 
+ * Data yang ditampilkan:
+ * - Avatar dan informasi dasar (username, gender, birthday, location, joined date)
+ * - User Statistics (forum posts, reviews, recommendations, dll)
+ * - Anime Statistics (days watched, mean score, watching, completed, dll)
+ * - Rekomendasi anime dari user (max 10 item)
+ * - Favorite Anime, Characters, dan People
+ * 
+ * Cara kerja:
+ * - Membuat HTML dinamis menggunakan template string
+ * - Menampilkan setiap section jika data tersedia
+ * - Menggunakan fallback image jika gambar tidak tersedia
+ * - Menampilkan tombol "Kembali" dengan fungsi safeNavigateBack()
+ */
 async function displayProfile(profile) {
     const content = document.getElementById('content');
     
@@ -323,6 +397,22 @@ async function displayProfile(profile) {
     content.innerHTML = html;
 }
 
+/**
+ * EKSEKUSI UTAMA - Dijalankan saat halaman dimuat
+ * 
+ * Alur:
+ * 1. Ambil parameter 'username' dari URL menggunakan getQueryParam()
+ * 2. Jika username ada:
+ *    - Panggil fetchUserProfile(username) untuk mengambil dan menampilkan profil
+ * 3. Jika username tidak ada (URL tanpa parameter):
+ *    - Sembunyikan loading
+ *    - Tampilkan pesan error "Username tidak ditemukan di URL"
+ * 
+ * Contoh URL yang valid:
+ * - profile.html?username=Nekomata1037  ✅
+ * - profile.html?username=sakura123     ✅
+ * - profile.html                         ❌ (akan tampil error)
+ */
 const username = getQueryParam('username');
 if (username) {
     fetchUserProfile(username);
