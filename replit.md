@@ -2,6 +2,27 @@
 
 **NimeKu** is a comprehensive anime information web portal providing real-time anime schedules and streaming data from Indonesian anime subtitle sources. It integrates with the Jikan API (MyAnimeList) for comprehensive anime schedules, popular titles, search, and detailed metadata, and also scrapes data from samehadaku.mba. The project includes a web-based frontend featuring real-time anime schedules with auto-updates every 5 minutes, intelligent notifications showing today's airing anime with titles and times, search capabilities, and detailed anime information pages with tabbed navigation for characters, episodes, videos, stats, reviews, recommendations, and pictures. The ambition is to provide a comprehensive, user-friendly anime information portal focused on the Indonesian audience. Key capabilities include a genre browser, full dark mode coverage, enhanced mobile UX with an integrated video player, dynamic time-based backgrounds, detailed user profile and recommendation displays, and advanced schedule notifications optimized for mobile viewing.
 
+# Recent Changes
+
+## October 17, 2025 - Profile & Mobile UX Improvements
+
+1. **Profile Page Navigation Fix**:
+   - Added `safeNavigateBack()` function to prevent stuck navigation on profile.html
+   - Automatically redirects to home page if no navigation history exists
+   - Handles external link scenarios and direct URL access gracefully
+
+2. **Mobile Header Layout Fix**:
+   - Fixed overlap issue between back button and anime title on mobile devices
+   - Added responsive padding (40-50px) to h1 elements to accommodate back button
+   - Implemented breakpoint-specific font sizes (1.1em @ 480px, 1.2em @ 640px)
+   - Enhanced line-height for better readability on small screens
+
+3. **Indonesian Documentation**:
+   - Added comprehensive Indonesian comments to profile.js
+   - Documented URL parameter system (profile.html?username=XXX)
+   - Explained data flow from URL → API → Display
+   - Included usage examples and error handling explanations
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
