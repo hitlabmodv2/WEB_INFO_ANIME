@@ -152,6 +152,26 @@ body {
     display: flex;
     flex-direction: column;
     gap: 8px;
+    overflow-y: auto;
+    max-height: calc(100vh - 80px);
+    -webkit-overflow-scrolling: touch;
+}
+
+.drawer-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.drawer-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.drawer-content::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.3);
+    border-radius: 3px;
+}
+
+.drawer-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(102, 126, 234, 0.5);
 }
 
 .drawer-divider {
@@ -3473,6 +3493,7 @@ body.dark-mode .scroll-to-top:hover {
     .drawer-content {
         padding: 10px;
         gap: 7px;
+        max-height: calc(100vh - 70px);
     }
     
     .drawer-content .tab-btn {
