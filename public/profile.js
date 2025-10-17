@@ -21,6 +21,24 @@ function navigateWithTransition(url) {
     }, 400);
 }
 
+// Fungsi untuk navigasi kembali yang aman
+// Jika tidak ada history (user langsung akses URL profile), maka kembali ke halaman utama
+function safeNavigateBack() {
+    // Cek apakah ada referrer dan bukan dari domain eksternal
+    if (document.referrer && document.referrer.includes(window.location.hostname)) {
+        // Cek panjang history, jika > 1 berarti ada halaman sebelumnya
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            // Fallback ke halaman utama
+            navigateWithTransition('/');
+        }
+    } else {
+        // Jika tidak ada referrer atau dari eksternal, kembali ke halaman utama
+        navigateWithTransition('/');
+    }
+}
+
 function initScrollToTop() {
     const scrollBtn = document.getElementById('scrollToTop');
     
@@ -149,7 +167,7 @@ async function displayProfile(profile) {
     
     let html = `
         <div class="profile-header">
-            <a href="javascript:history.back()" class="back-btn">← Kembali</a>
+            <a href="javascript:void(0)" onclick="safeNavigateBack()" class="back-btn">← Kembali</a>
             <div class="profile-main">
                 <div class="profile-avatar">
                     <img src="${profile.avatar || 'https://via.placeholder.com/150?text=No+Avatar'}" 
